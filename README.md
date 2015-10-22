@@ -14,6 +14,7 @@ Design highlights
 A table to convert digits to letters
 
 |   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|---|---|---|---|---|---|---|---|---|---|---|
 |   | A |   | S | I | N |   | T | O | E | R |
 | 1 | B | C | D | F | G | H | J | K | L | M |
 | 5 | P | Q | U | V | W | X | Y | Z | . | / |
