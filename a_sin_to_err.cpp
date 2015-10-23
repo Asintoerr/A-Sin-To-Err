@@ -56,10 +56,12 @@ fprintf(stderr, "A0=0x%08x+0x%08x=0x%08x\n",pin[0],expaned_key_table[0],A);
   uint32_t B = pin[1] + expaned_key_table[1];
 fprintf(stderr, "B0=0x%08x+0x%08x=0x%08x\n",pin[1],expaned_key_table[1],B);
   for (uint32_t i = 1; i <= r; i++) {
+fprintf(stderr, "A%d = rotl(0x%08x ^ 0x%08x = 0x%08x, 0x%08x) + 0x%08x = 0x%08x + 0x%08x = 0x%08x\n", 
+                   i,         A,       B,     A ^ B,  B, expaned_key_table[2 * i], rotl(A ^ B, B), expaned_key_table[2 * i], rotl(A ^ B, B) + expaned_key_table[2 * i]);
     A = rotl(A ^ B, B) + expaned_key_table[2 * i];
-fprintf(stderr, "A%d=0x%08x\n", i, A);
+fprintf(stderr, "B%d = rotl(0x%08x ^ 0x%08x= 0x%08x, 0x%08x) + 0x%08x = 0x%08x\n", 
+                   i,         B,       A,    B ^ A,   A, expaned_key_table[2 * i + 1], rotl(B ^ A, A) + expaned_key_table[2 * i + 1]);
     B = rotl(B ^ A, A) + expaned_key_table[2 * i + 1];
-fprintf(stderr, "B%d=0x%08x\n", i, B);
   }
   pout[0] = A;
   pout[1] = B;

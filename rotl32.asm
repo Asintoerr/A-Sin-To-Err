@@ -6,24 +6,24 @@
 #define BUFFER_VARIABLE  $a
 
 ; Variable initialization
-    lit #$d
+    lit #$0
     st FIRST_OPERAND+0
-    lit #$e
+    lit #$c
     st FIRST_OPERAND+1
     lit #$a
     st FIRST_OPERAND+2
-    lit #$d
+    lit #$e
     st FIRST_OPERAND+3
-    lit #$b
+    lit #$a
     st FIRST_OPERAND+4
-    lit #$e
+    lit #$0
     st FIRST_OPERAND+5
-    lit #$e
+    lit #$9
     st FIRST_OPERAND+6
-    lit #$f
+    lit #$5
     st FIRST_OPERAND+7
 
-    lit #$2
+    lit #$a
     st SECOND_OPERAND+0
     lit #$0
     st SECOND_OPERAND+1
