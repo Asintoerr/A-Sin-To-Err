@@ -1,10 +1,10 @@
 // Input: 
-//   30 digit key, then
-//   5 digit nonce, then
+//   32 digit key, then
+//   8 digit nonce, then
 //   plaintext (cyphertext) digits
 //
 // Output:
-//   5 digit nonce, then
+//   8 digit nonce, then
 //   cyphertext (plaintext) digits
 
 #include <stdio.h>
@@ -70,11 +70,14 @@ void emit(char c)
   }
   putchar(c);
   switch (++count) {
-    case  5: putchar(' '); break;
-    case 10: putchar(' '); putchar(' '); break;
-    case 15: putchar(' '); break;
+    case  4: putchar(' '); break;
+    case  8: putchar(' '); break;
+    case 12: putchar(' '); break;
+    case 16: putchar(' '); putchar(' '); break;
     case 20: putchar(' '); break;
-    case 25: putchar('\n'); count = 0; break;
+    case 24: putchar(' '); break;
+    case 28: putchar(' '); break;
+    case 32: putchar('\n'); count = 0; break;
   }
 }
 
@@ -82,11 +85,11 @@ int main(void)
 {
   unsigned char key[16] = {0};
   int c;
-  for (int i = 0; i < 30; ) {
+  for (int i = 0; i < 32; ) {
     c = getchar();
     switch (c) {
       case EOF:
-        fprintf(stderr, "Key too short (expected 30 digits, got %d)\n", i);
+        fprintf(stderr, "Key too short (expected 32 digits, got %d)\n", i);
         return -1;
       case '1': case '2': case '3': case '4': case '5': 
       case '6': case '7': case '8': case '9': case '0':
@@ -108,13 +111,29 @@ int main(void)
 //   key[0], key[1], key[2], key[3], key[4], key[5], key[6], key[7], key[8], key[9], key[10], key[11], key[12], key[13], key[14], key[15]
 //  );
   rc5_setup(&key[0]);
+  
+// Nibbler assembly code generation 
+#if 0
+printf("#define EXPANDED_KEY_TABLE $18\n");
+for (int i = 0; i < t; i++) {
+  printf("\n;Expaned key table word %d of %d\n", i, t);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i]      ) & 0xf, i * 4 + 0);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >>  4) & 0xf, i * 4 + 1);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >>  8) & 0xf, i * 4 + 2);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 12) & 0xf, i * 4 + 3);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 16) & 0xf, i * 4 + 4);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 20) & 0xf, i * 4 + 5);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 24) & 0xf, i * 4 + 6);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 28) & 0xf, i * 4 + 7);
+}
+#endif
 
   uint32_t text[2] = { 0 }; // text[0] is nonce, text[1] is counter for CTR mode
-  for (int i = 0; i < 5; ) {
+  for (int i = 0; i < 8; ) {
     c = getchar();
     switch (c) {
       case EOF:
-        fprintf(stderr, "Nonce too short (expected 5 digits, got %d)\n", i);
+        fprintf(stderr, "Nonce too short (expected 8 digits, got %d)\n", i);
         return -3;
       case '1': case '2': case '3': case '4': case '5': 
       case '6': case '7': case '8': case '9': case '0':
