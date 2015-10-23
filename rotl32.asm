@@ -23,9 +23,9 @@
     lit #$f
     st FIRST_OPERAND+7
 
-    lit #$f
+    lit #$2
     st SECOND_OPERAND+0
-    lit #$1
+    lit #$0
     st SECOND_OPERAND+1
  
 rotl32:
@@ -102,7 +102,7 @@ rotl32:
     
 +   ld SECOND_OPERAND+0      ; 2nd bit of rotation counter...
     NORI #0
-    NORI #$d
+    NORI #$b
     jz +
     ld OPERATION_RESULT+1    ; ...is set, rotate by 4 bits (1 nibble)
     st BUFFER_VARIABLE
@@ -123,5 +123,104 @@ rotl32:
     ld BUFFER_VARIABLE       ; 1->2
     st OPERATION_RESULT+2
 
++   ld SECOND_OPERAND+0      ; last two bits of rotation counter, rotate one by one
+    st BUFFER_VARIABLE
+
+rotate_more:
+    NORI #0
+    NORI #$c
+    jz halt
+
+    ld OPERATION_RESULT+0
+    addm OPERATION_RESULT+0
+    st OPERATION_RESULT+0
+    jnc +                
+    
+    ld OPERATION_RESULT+1    ;--------------
+    addi #1
+    jnc ++
+    ld OPERATION_RESULT+1
+    st OPERATION_RESULT+1
+    jmp +++ 
++   ld OPERATION_RESULT+1
+++  addm OPERATION_RESULT+1
+    st OPERATION_RESULT+1
+    jnc +                
+
++++ ld OPERATION_RESULT+2    ;--------------
+    addi #1
+    jnc ++
+    ld OPERATION_RESULT+2
+    st OPERATION_RESULT+2
+    jmp +++ 
++   ld OPERATION_RESULT+2
+++  addm OPERATION_RESULT+2
+    st OPERATION_RESULT+2
+    jnc +                
+
++++ ld OPERATION_RESULT+3    ;--------------
+    addi #1
+    jnc ++
+    ld OPERATION_RESULT+3
+    st OPERATION_RESULT+3
+    jmp +++ 
++   ld OPERATION_RESULT+3
+++  addm OPERATION_RESULT+3
+    st OPERATION_RESULT+3
+    jnc +                
+
++++ ld OPERATION_RESULT+4    ;--------------
+    addi #1
+    jnc ++
+    ld OPERATION_RESULT+4
+    st OPERATION_RESULT+4
+    jmp +++ 
++   ld OPERATION_RESULT+4
+++  addm OPERATION_RESULT+4
+    st OPERATION_RESULT+4
+    jnc +                
+
++++ ld OPERATION_RESULT+5    ;--------------
+    addi #1
+    jnc ++
+    ld OPERATION_RESULT+5
+    st OPERATION_RESULT+5
+    jmp +++ 
++   ld OPERATION_RESULT+5
+++  addm OPERATION_RESULT+5
+    st OPERATION_RESULT+5
+    jnc +                
+
++++ ld OPERATION_RESULT+6    ;--------------
+    addi #1
+    jnc ++
+    ld OPERATION_RESULT+6
+    st OPERATION_RESULT+6
+    jmp +++ 
++   ld OPERATION_RESULT+6
+++  addm OPERATION_RESULT+6
+    st OPERATION_RESULT+6
+    jnc +                
+
++++ ld OPERATION_RESULT+7    ;--------------
+    addi #1
+    jnc ++
+    ld OPERATION_RESULT+7
+    st OPERATION_RESULT+7
+    jmp +++ 
++   ld OPERATION_RESULT+7
+++  addm OPERATION_RESULT+7
+    st OPERATION_RESULT+7
+    jnc +
+    
++++ ld OPERATION_RESULT+0     ; wrap around last bit
+    addi #1
+    st OPERATION_RESULT+0
+
++   ld BUFFER_VARIABLE
+    addi #-1
+    st BUFFER_VARIABLE
+    jmp rotate_more
+
 halt:    
-+   jmp halt
+    jmp halt
