@@ -52,10 +52,14 @@ void rc5_setup(unsigned char *key_bytes)
 void rc5_encrypt(uint32_t *pin, uint32_t *pout)
 {
   uint32_t A = pin[0] + expaned_key_table[0];
+fprintf(stderr, "A0=0x%08x+0x%08x=0x%08x\n",pin[0],expaned_key_table[0],A);
   uint32_t B = pin[1] + expaned_key_table[1];
+fprintf(stderr, "B0=0x%08x+0x%08x=0x%08x\n",pin[1],expaned_key_table[1],B);
   for (uint32_t i = 1; i <= r; i++) {
     A = rotl(A ^ B, B) + expaned_key_table[2 * i];
+fprintf(stderr, "A%d=0x%08x\n", i, A);
     B = rotl(B ^ A, A) + expaned_key_table[2 * i + 1];
+fprintf(stderr, "B%d=0x%08x\n", i, B);
   }
   pout[0] = A;
   pout[1] = B;
@@ -113,18 +117,18 @@ int main(void)
   rc5_setup(&key[0]);
   
 // Nibbler assembly code generation 
-#if 0
-printf("#define EXPANDED_KEY_TABLE $18\n");
+#if 1
+printf("#define EXPANDED_KEY_TABLE $c0 ; 42 32 bit words = 172 nibbles\n");
 for (int i = 0; i < t; i++) {
   printf("\n;Expaned key table word %d of %d\n", i, t);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i]      ) & 0xf, i * 4 + 0);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >>  4) & 0xf, i * 4 + 1);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >>  8) & 0xf, i * 4 + 2);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 12) & 0xf, i * 4 + 3);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 16) & 0xf, i * 4 + 4);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 20) & 0xf, i * 4 + 5);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 24) & 0xf, i * 4 + 6);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 28) & 0xf, i * 4 + 7);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i]      ) & 0xf, i * 8 + 0);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >>  4) & 0xf, i * 8 + 1);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >>  8) & 0xf, i * 8 + 2);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 12) & 0xf, i * 8 + 3);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 16) & 0xf, i * 8 + 4);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 20) & 0xf, i * 8 + 5);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 24) & 0xf, i * 8 + 6);
+  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 28) & 0xf, i * 8 + 7);
 }
 #endif
 

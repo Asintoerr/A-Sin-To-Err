@@ -5,38 +5,38 @@
 #define OPERATION_RESULT $10
 
 ; Variable initialization
-    lit #$8
+    lit #$0
     st FIRST_OPERAND+0
-    lit #$7
+    lit #$0
     st FIRST_OPERAND+1
-    lit #$6
+    lit #$0
     st FIRST_OPERAND+2
-    lit #$5
+    lit #$0
     st FIRST_OPERAND+3
-    lit #$4
+    lit #$0
     st FIRST_OPERAND+4
-    lit #$3
+    lit #$0
     st FIRST_OPERAND+5
-    lit #$2
+    lit #$0
     st FIRST_OPERAND+6
-    lit #$1
+    lit #$0
     st FIRST_OPERAND+7
 
-    lit #$0
-    st SECOND_OPERAND+0
-    lit #$f
-    st SECOND_OPERAND+1
-    lit #$e
-    st SECOND_OPERAND+2
-    lit #$d
-    st SECOND_OPERAND+3
-    lit #$c
-    st SECOND_OPERAND+4
-    lit #$b
-    st SECOND_OPERAND+5
     lit #$a
+    st SECOND_OPERAND+0
+    lit #$c
+    st SECOND_OPERAND+1
+    lit #$6
+    st SECOND_OPERAND+2
+    lit #$8
+    st SECOND_OPERAND+3
+    lit #$d
+    st SECOND_OPERAND+4
+    lit #$3
+    st SECOND_OPERAND+5
+    lit #$b
     st SECOND_OPERAND+6
-    lit #$9
+    lit #$4
     st SECOND_OPERAND+7
  
 u32addition:
@@ -65,6 +65,7 @@ u32addition:
 +   ld FIRST_OPERAND+2       ;
 ++  addm SECOND_OPERAND+2    ;
     st OPERATION_RESULT+2    ;
+    jnc +                    ;
     
     ld FIRST_OPERAND+3       ;--------------
     addi #1
