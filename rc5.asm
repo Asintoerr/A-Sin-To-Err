@@ -1681,8 +1681,7 @@ cycle_start:
     jmp halt
 
 add32_into_rc5_a:
-
-+++ ld OPERAND_A+0
+    ld OPERAND_A+0
     addm OPERAND_B+0
     st RC5_A+0
     jnc +
@@ -1709,7 +1708,7 @@ add32_into_rc5_a:
     st RC5_A+2
     jnc +
     
-    ld OPERAND_A+3       ;--------------
++++ ld OPERAND_A+3       ;--------------
     addi #1
     jnc ++
     ld OPERAND_B+3
@@ -1720,7 +1719,7 @@ add32_into_rc5_a:
     st RC5_A+3
     jnc +
 
-    ld OPERAND_A+4       ;--------------
++++ ld OPERAND_A+4       ;--------------
     addi #1
     jnc ++
     ld OPERAND_B+4
@@ -1731,7 +1730,7 @@ add32_into_rc5_a:
     st RC5_A+4
     jnc +
 
-    ld OPERAND_A+5       ;--------------
++++ ld OPERAND_A+5       ;--------------
     addi #1
     jnc ++
     ld OPERAND_B+5
@@ -1742,7 +1741,7 @@ add32_into_rc5_a:
     st RC5_A+5
     jnc +
 
-    ld OPERAND_A+6       ;--------------
++++ ld OPERAND_A+6       ;--------------
     addi #1
     jnc ++
     ld OPERAND_B+6
@@ -1753,7 +1752,7 @@ add32_into_rc5_a:
     st RC5_A+6
     jnc +
 
-    ld OPERAND_A+7       ;--------------
++++ ld OPERAND_A+7       ;--------------
     addi #1
     jnc ++
     ld OPERAND_B+7
@@ -1766,8 +1765,7 @@ add32_into_rc5_a:
 +++ jmp cycle_start
 
 add32_into_rc5_b:
-
-+++ ld OPERAND_A+0
+    ld OPERAND_A+0
     addm OPERAND_B+0
     st RC5_B+0
     jnc +
@@ -1794,7 +1792,7 @@ add32_into_rc5_b:
     st RC5_B+2
     jnc +
     
-    ld OPERAND_A+3       ;--------------
++++ ld OPERAND_A+3       ;--------------
     addi #1
     jnc ++
     ld OPERAND_B+3
@@ -1805,7 +1803,7 @@ add32_into_rc5_b:
     st RC5_B+3
     jnc +
 
-    ld OPERAND_A+4       ;--------------
++++ ld OPERAND_A+4       ;--------------
     addi #1
     jnc ++
     ld OPERAND_B+4
@@ -1816,7 +1814,7 @@ add32_into_rc5_b:
     st RC5_B+4
     jnc +
 
-    ld OPERAND_A+5       ;--------------
++++ ld OPERAND_A+5       ;--------------
     addi #1
     jnc ++
     ld OPERAND_B+5
@@ -1827,7 +1825,7 @@ add32_into_rc5_b:
     st RC5_B+5
     jnc +
 
-    ld OPERAND_A+6       ;--------------
++++ ld OPERAND_A+6       ;--------------
     addi #1
     jnc ++
     ld OPERAND_B+6
@@ -1838,7 +1836,7 @@ add32_into_rc5_b:
     st RC5_B+6
     jnc +
 
-    ld OPERAND_A+7       ;--------------
++++ ld OPERAND_A+7       ;--------------
     addi #1
     jnc ++
     ld OPERAND_B+7

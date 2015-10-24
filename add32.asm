@@ -5,38 +5,38 @@
 #define OPERATION_RESULT $10
 
 ; Variable initialization
-    lit #$0
+    lit #$6
     st FIRST_OPERAND+0
-    lit #$0
+    lit #$2
     st FIRST_OPERAND+1
-    lit #$0
+    lit #$3
     st FIRST_OPERAND+2
-    lit #$0
+    lit #$b
     st FIRST_OPERAND+3
-    lit #$0
+    lit #$f
     st FIRST_OPERAND+4
-    lit #$0
+    lit #$4
     st FIRST_OPERAND+5
     lit #$0
     st FIRST_OPERAND+6
-    lit #$0
+    lit #$e
     st FIRST_OPERAND+7
 
-    lit #$a
+    lit #$5
     st SECOND_OPERAND+0
-    lit #$c
+    lit #$f
     st SECOND_OPERAND+1
-    lit #$6
-    st SECOND_OPERAND+2
-    lit #$8
-    st SECOND_OPERAND+3
     lit #$d
+    st SECOND_OPERAND+2
+    lit #$6
+    st SECOND_OPERAND+3
+    lit #$8
     st SECOND_OPERAND+4
-    lit #$3
-    st SECOND_OPERAND+5
-    lit #$b
-    st SECOND_OPERAND+6
     lit #$4
+    st SECOND_OPERAND+5
+    lit #$a
+    st SECOND_OPERAND+6
+    lit #$1
     st SECOND_OPERAND+7
  
 u32addition:
@@ -67,7 +67,7 @@ u32addition:
     st OPERATION_RESULT+2    ;
     jnc +                    ;
     
-    ld FIRST_OPERAND+3       ;--------------
++++ ld FIRST_OPERAND+3       ;--------------
     addi #1
     jnc ++
     ld SECOND_OPERAND+3
@@ -78,7 +78,7 @@ u32addition:
     st OPERATION_RESULT+3    ;
     jnc +                    ;
 
-    ld FIRST_OPERAND+4       ;--------------
++++ ld FIRST_OPERAND+4       ;--------------
     addi #1
     jnc ++
     ld SECOND_OPERAND+4
@@ -89,7 +89,7 @@ u32addition:
     st OPERATION_RESULT+4    ;
     jnc +                    ;
 
-    ld FIRST_OPERAND+5       ;--------------
++++ ld FIRST_OPERAND+5       ;--------------
     addi #1
     jnc ++
     ld SECOND_OPERAND+5
@@ -100,7 +100,7 @@ u32addition:
     st OPERATION_RESULT+5    ;
     jnc +                    ;
 
-    ld FIRST_OPERAND+6       ;--------------
++++ ld FIRST_OPERAND+6       ;--------------
     addi #1
     jnc ++
     ld SECOND_OPERAND+6
@@ -111,7 +111,7 @@ u32addition:
     st OPERATION_RESULT+6    ;
     jnc +                    ;
 
-    ld FIRST_OPERAND+7       ;--------------
++++ ld FIRST_OPERAND+7       ;--------------
     addi #1
     jnc ++
     ld SECOND_OPERAND+7

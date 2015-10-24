@@ -20,7 +20,7 @@ std::uint32_t rotl(std::uint32_t v, std::uint32_t shift)
 
 const uint8_t r = 16; // rounds
 const uint8_t t = 2 * (r + 1); // the number of words in the expanded key table
-uint32_t expaned_key_table[t];
+uint32_t expanded_key_table[t];
 
 void rc5_setup(unsigned char *key_bytes)
 {
@@ -34,16 +34,16 @@ void rc5_setup(unsigned char *key_bytes)
       key_words[i/u] = (key_words[i/u] << 8) + key_bytes[i];
    }
    
-   expaned_key_table[0] = 0xB7E15163;
+   expanded_key_table[0] = 0xB7E15163;
    for (i = 1; i < t; i++) {
-      expaned_key_table[i] = expaned_key_table[i - 1] + 0x9E3779B9;
+      expanded_key_table[i] = expanded_key_table[i - 1] + 0x9E3779B9;
    }
    
    A = B = i = j = 0;
 
    for (k = 0; k < 3 * t; k++)
    {
-      A = expaned_key_table[i] = rotl(expaned_key_table[i] + (A + B), 3);
+      A = expanded_key_table[i] = rotl(expanded_key_table[i] + (A + B), 3);
       B = key_words[j] = rotl(key_words[j] + (A + B), (A + B));
       i = (i + 1) % t;
       j = (j + 1) % c;
@@ -52,17 +52,17 @@ void rc5_setup(unsigned char *key_bytes)
 
 void rc5_encrypt(uint32_t *pin, uint32_t *pout)
 {
-  uint32_t A = pin[0] + expaned_key_table[0];
-fprintf(stderr, "A0=0x%08x+0x%08x=0x%08x\n",pin[0],expaned_key_table[0],A);
-  uint32_t B = pin[1] + expaned_key_table[1];
-fprintf(stderr, "B0=0x%08x+0x%08x=0x%08x\n",pin[1],expaned_key_table[1],B);
+  uint32_t A = pin[0] + expanded_key_table[0];
+fprintf(stderr, "A0=0x%08x+0x%08x=0x%08x\n",pin[0],expanded_key_table[0],A);
+  uint32_t B = pin[1] + expanded_key_table[1];
+fprintf(stderr, "B0=0x%08x+0x%08x=0x%08x\n",pin[1],expanded_key_table[1],B);
   for (uint32_t i = 1; i <= r; i++) {
 fprintf(stderr, "A%d = rotl(0x%08x ^ 0x%08x = 0x%08x, 0x%08x) + 0x%08x = 0x%08x + 0x%08x = 0x%08x\n", 
-                   i,         A,       B,     A ^ B,  B, expaned_key_table[2 * i], rotl(A ^ B, B), expaned_key_table[2 * i], rotl(A ^ B, B) + expaned_key_table[2 * i]);
-    A = rotl(A ^ B, B) + expaned_key_table[2 * i];
-fprintf(stderr, "B%d = rotl(0x%08x ^ 0x%08x= 0x%08x, 0x%08x) + 0x%08x = 0x%08x\n", 
-                   i,         B,       A,    B ^ A,   A, expaned_key_table[2 * i + 1], rotl(B ^ A, A) + expaned_key_table[2 * i + 1]);
-    B = rotl(B ^ A, A) + expaned_key_table[2 * i + 1];
+                   i,         A,       B,     A ^ B,  B, expanded_key_table[2 * i], rotl(A ^ B, B), expanded_key_table[2 * i], rotl(A ^ B, B) + expanded_key_table[2 * i]);
+    A = rotl(A ^ B, B) + expanded_key_table[2 * i];
+fprintf(stderr, "B%d = rotl(0x%08x ^ 0x%08x= 0x%08x, 0x%08x) + 0x%08x = 0x%08x + 0x%08x = 0x%08x\n", 
+                   i,         B,       A,    B ^ A,   A, expanded_key_table[2 * i + 1], rotl(B ^ A, A), expanded_key_table[2 * i + 1], rotl(B ^ A, A) + expanded_key_table[2 * i + 1]);
+    B = rotl(B ^ A, A) + expanded_key_table[2 * i + 1];
   }
   pout[0] = A;
   pout[1] = B;
@@ -128,14 +128,14 @@ printf("#define EXPANDED_KEY_TABLE $c0 ; %d 32 bit words = %d nibbles\n", t, t *
 // Order by nibble value to reduce number of lit commands
 std::set<int> nibble_addr[16];
 for (int i = 0; i < t; i++) {
-  nibble_addr[(expaned_key_table[i]      ) & 0xf].insert(i * 8 + 0);
-  nibble_addr[(expaned_key_table[i] >>  4) & 0xf].insert(i * 8 + 1);
-  nibble_addr[(expaned_key_table[i] >>  8) & 0xf].insert(i * 8 + 2);
-  nibble_addr[(expaned_key_table[i] >> 12) & 0xf].insert(i * 8 + 3);
-  nibble_addr[(expaned_key_table[i] >> 16) & 0xf].insert(i * 8 + 4);
-  nibble_addr[(expaned_key_table[i] >> 20) & 0xf].insert(i * 8 + 5);
-  nibble_addr[(expaned_key_table[i] >> 24) & 0xf].insert(i * 8 + 6);
-  nibble_addr[(expaned_key_table[i] >> 28) & 0xf].insert(i * 8 + 7);
+  nibble_addr[(expanded_key_table[i]      ) & 0xf].insert(i * 8 + 0);
+  nibble_addr[(expanded_key_table[i] >>  4) & 0xf].insert(i * 8 + 1);
+  nibble_addr[(expanded_key_table[i] >>  8) & 0xf].insert(i * 8 + 2);
+  nibble_addr[(expanded_key_table[i] >> 12) & 0xf].insert(i * 8 + 3);
+  nibble_addr[(expanded_key_table[i] >> 16) & 0xf].insert(i * 8 + 4);
+  nibble_addr[(expanded_key_table[i] >> 20) & 0xf].insert(i * 8 + 5);
+  nibble_addr[(expanded_key_table[i] >> 24) & 0xf].insert(i * 8 + 6);
+  nibble_addr[(expanded_key_table[i] >> 28) & 0xf].insert(i * 8 + 7);
 }
 for (int i = 0; i < 16; i++) {
   printf("    lit #$%x\n", i);
@@ -147,6 +147,10 @@ for (int i = 0; i < 16; i++) {
   }
 }
 #endif
+
+fprintf(stderr, "expanded key table 0: %08x %08x\n", expanded_key_table[0], expanded_key_table[1]);
+fprintf(stderr, "expanded key table 1: %08x %08x\n", expanded_key_table[2], expanded_key_table[3]);
+fprintf(stderr, "expanded key table 2: %08x %08x\n", expanded_key_table[4], expanded_key_table[5]);
 
   uint32_t text[2] = { 0 }; // text[0] is nonce, text[1] is counter for CTR mode
   for (int i = 0; i < 8; ) {
