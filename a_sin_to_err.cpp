@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <cstdint>
+#include <set>
 
 std::uint32_t rotl(std::uint32_t v, std::uint32_t shift)
 {
@@ -17,7 +18,7 @@ std::uint32_t rotl(std::uint32_t v, std::uint32_t shift)
   return (v << shift) | (v >> (32 - shift));
 }
 
-const uint8_t r = 20; // rounds
+const uint8_t r = 16; // rounds
 const uint8_t t = 2 * (r + 1); // the number of words in the expanded key table
 uint32_t expaned_key_table[t];
 
@@ -65,6 +66,9 @@ fprintf(stderr, "B%d = rotl(0x%08x ^ 0x%08x= 0x%08x, 0x%08x) + 0x%08x = 0x%08x\n
   }
   pout[0] = A;
   pout[1] = B;
+
+fprintf(stderr, "%08x %08x -> %08x %08x\n",pin[0],pin[1],pout[0],pout[1]);
+
 }
 
 void emit(char c)
@@ -120,17 +124,27 @@ int main(void)
   
 // Nibbler assembly code generation 
 #if 1
-printf("#define EXPANDED_KEY_TABLE $c0 ; 42 32 bit words = 172 nibbles\n");
+printf("#define EXPANDED_KEY_TABLE $c0 ; %d 32 bit words = %d nibbles\n", t, t * 8);
+// Order by nibble value to reduce number of lit commands
+std::set<int> nibble_addr[16];
 for (int i = 0; i < t; i++) {
-  printf("\n;Expaned key table word %d of %d\n", i, t);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i]      ) & 0xf, i * 8 + 0);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >>  4) & 0xf, i * 8 + 1);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >>  8) & 0xf, i * 8 + 2);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 12) & 0xf, i * 8 + 3);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 16) & 0xf, i * 8 + 4);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 20) & 0xf, i * 8 + 5);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 24) & 0xf, i * 8 + 6);
-  printf("    lit #$%x\n    st EXPANDED_KEY_TABLE+%d\n", (expaned_key_table[i] >> 28) & 0xf, i * 8 + 7);
+  nibble_addr[(expaned_key_table[i]      ) & 0xf].insert(i * 8 + 0);
+  nibble_addr[(expaned_key_table[i] >>  4) & 0xf].insert(i * 8 + 1);
+  nibble_addr[(expaned_key_table[i] >>  8) & 0xf].insert(i * 8 + 2);
+  nibble_addr[(expaned_key_table[i] >> 12) & 0xf].insert(i * 8 + 3);
+  nibble_addr[(expaned_key_table[i] >> 16) & 0xf].insert(i * 8 + 4);
+  nibble_addr[(expaned_key_table[i] >> 20) & 0xf].insert(i * 8 + 5);
+  nibble_addr[(expaned_key_table[i] >> 24) & 0xf].insert(i * 8 + 6);
+  nibble_addr[(expaned_key_table[i] >> 28) & 0xf].insert(i * 8 + 7);
+}
+for (int i = 0; i < 16; i++) {
+  printf("    lit #$%x\n", i);
+  for ( std::set<int>::const_iterator it = nibble_addr[i].begin()
+      ; it != nibble_addr[i].end()
+      ; ++it
+      ) {
+    printf("    st EXPANDED_KEY_TABLE+%d\n", *it);
+  }
 }
 #endif
 
