@@ -151,7 +151,6 @@ fprintf(stderr, "expanded key table 2: %08x %08x\n", expanded_key_table[4], expa
 //  fprintf(stderr, "Nonce: %08x\n", text[0]);
 
   uint32_t stream[2] = { 0 };
-  int nibbles_left = 0;
   while ((c = getchar()) != EOF) {
     switch (c) {
       case EOF:
@@ -161,17 +160,9 @@ fprintf(stderr, "expanded key table 2: %08x %08x\n", expanded_key_table[4], expa
       case '6': case '7': case '8': case '9': case '0':
         int digit;
         for (;;) {
-          if (!nibbles_left) {
-            rc5_encrypt(text, stream);
-            text[1]++;
-            nibbles_left = 16; // 2 32 bit words = 16 4 bit nibbles
-          }
-          nibbles_left--;
-          if (nibbles_left > 8) {
-            digit = (stream[0] >> ((nibbles_left - 8) * 4)) & 0xf;
-          } else {
-            digit = (stream[1] >> (nibbles_left * 4)) & 0xf;
-          }
+          text[1]++;
+          rc5_encrypt(text, stream);
+          digit = stream[0] & 0xf;
           if (digit < 10) {
             break;
           }

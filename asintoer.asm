@@ -26,7 +26,6 @@
 
 ; Where we are in the process
 #define NONCE_DIGITS      $3b ; number of nonce digits entered
-                              ; 1 nibble empty
 
 ; Flags for RC5 unrolled loop
 #define TODO_LIST_A        $3c ; 17 nibbles
@@ -51,9 +50,7 @@
 #define R3C     $8a            ; keypad row 3 count, 1 nibble
 #define R3L     $8b            ; keypad row 3 previous state, 1 nibble
 
-; CTR encryption
-#define KEY_DIG $8c            ; keystream digit, 1 nibble
-                               ; 3 * 16 - 13 nibbles empty
+                               ; 3 * 16 - 12 nibbles empty
 
 ; Pre-expanded RC5 key table
 #define EXPANDED_KEY_TABLE_A0 $c0
@@ -720,20 +717,50 @@ new_digit:
     ld NEW_DIG
     st CTR_NONCE+7
     jmp next_nonce
-    
-    ; Encrypt NEW_DIG here ===============================================================
 +
-    ; get KEY_DIG
-    ;;temporary, for debugging only
-    ld KEY_DIG
+    ; Get next keystream digit ===========================================================
+get_another_key_digit:
+    ld CTR_COUNTER+0 ; increment counter
     addi #1
-    cmpi #10
-    jnz +
-    lit #0
-+   st KEY_DIG
+    st CTR_COUNTER+0
+    jnc rc5_round
+    ld CTR_COUNTER+1 ;
+    addi #1
+    st CTR_COUNTER+1
+    jnc rc5_round
+    ld CTR_COUNTER+2 ;
+    addi #1
+    st CTR_COUNTER+2
+    jnc rc5_round
+    ld CTR_COUNTER+3 ;
+    addi #1
+    st CTR_COUNTER+3
+    jnc rc5_round
+    ld CTR_COUNTER+4 ;
+    addi #1
+    st CTR_COUNTER+4
+    jnc rc5_round
+    ld CTR_COUNTER+5 ;
+    addi #1
+    st CTR_COUNTER+5
+    jnc rc5_round
+    ld CTR_COUNTER+6 ;
+    addi #1
+    st CTR_COUNTER+6
+    jnc rc5_round
+    ld CTR_COUNTER+7 ;
+    addi #1
+    st CTR_COUNTER+7
+    jmp rc5_round
+
+got_next_key_digit: ; rc5_round returns here
     
-    ; Compute 10's complement of plaintext, store in TEMP
-    ld NEW_DIG
+    ; Encrypt NEW_DIG on keystream digit =================================================
+    ld RC5_A      ; Check if first nibble of RC5_A is valid BCD
+    cmpi #10
+    jc get_another_key_digit
+
+    ; Compute 10's complement of keystream digit, store in TEMP
     nori #0         ; NOT, same as 16's complement
     addi #11
     cmpi #10
@@ -741,8 +768,8 @@ new_digit:
     lit #0
 +   st TEMP
 
-    ; Compute 10's complement of key
-    ld KEY_DIG
+    ; Compute 10's complement of plaintext
+    ld NEW_DIG
     nori #0         ; NOT, same as 16's complement
     addi #11
     cmpi #10
@@ -752,7 +779,7 @@ new_digit:
     ; Add 10's complements
 +   addm TEMP
     jc +
-    cmpi #10 ; ??
+    cmpi #10
     jnc ++
 +   addi #6
     
@@ -2091,7 +2118,7 @@ cycle_start:
 +    
 ;  } // end of unrolled round loop
 
-    jmp halt
+    jmp got_next_key_digit
 
 add32_into_rc5_a:
     ld OPERAND_A+0
@@ -2534,6 +2561,3 @@ rotate_more:
     addi #-1
     st BUFFER_VARIABLE
     jmp rotate_more
-    
-halt:
-    jmp halt
