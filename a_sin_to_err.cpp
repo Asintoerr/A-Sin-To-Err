@@ -1,16 +1,18 @@
 // Input: 
-//   32 digit key, then
-//   8 digit nonce, then
-//   plaintext (cyphertext) digits
+//   8 digit nonce followed by plaintext or cyphertext digits
 //
 // Output:
-//   8 digit nonce, then
-//   cyphertext (plaintext) digits
-
+//   8 digit nonce followed by cyphertext or plaintext digits
+//
 #include <stdio.h>
 #include <inttypes.h>
 #include <cstdint>
 #include <set>
+
+// Use different key, preferably obtained by flipping a coin 128 times
+static unsigned char key[16] = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+                                 0x20, 0x20, 0x20, 0xde, 0xad, 0xfa, 0xca, 0xde
+                               };
 
 std::uint32_t rotl(std::uint32_t v, std::uint32_t shift)
 {
@@ -93,33 +95,6 @@ void emit(char c)
 
 int main(void)
 {
-  unsigned char key[16] = {0};
-  int c;
-  for (int i = 0; i < 32; ) {
-    c = getchar();
-    switch (c) {
-      case EOF:
-        fprintf(stderr, "Key too short (expected 32 digits, got %d)\n", i);
-        return -1;
-      case '1': case '2': case '3': case '4': case '5': 
-      case '6': case '7': case '8': case '9': case '0':
-        if (i & 1) {
-          key[i >> 1] |= (c - '0') << 4;
-        } else {
-          key[i >> 1] |= (c - '0');
-        }
-        i++;
-        break;
-      case ' ': case '\n': case '\r': case '\t':
-        break;
-      default:
-        fprintf(stderr, "Expected key digit, got %c\n", c);
-        return -2;
-    }
-  }
-//  fprintf(stderr, "Key: %02x %02x %02x %02x %02x %02x %02x %02x  %02x %02x %02x %02x %02x %02x %02x %02x\n",
-//   key[0], key[1], key[2], key[3], key[4], key[5], key[6], key[7], key[8], key[9], key[10], key[11], key[12], key[13], key[14], key[15]
-//  );
   rc5_setup(&key[0]);
   
 // Nibbler assembly code generation 
@@ -153,6 +128,7 @@ fprintf(stderr, "expanded key table 1: %08x %08x\n", expanded_key_table[2], expa
 fprintf(stderr, "expanded key table 2: %08x %08x\n", expanded_key_table[4], expanded_key_table[5]);
 
   uint32_t text[2] = { 0 }; // text[0] is nonce, text[1] is counter for CTR mode
+  int c;
   for (int i = 0; i < 8; ) {
     c = getchar();
     switch (c) {
