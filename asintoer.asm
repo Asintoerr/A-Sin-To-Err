@@ -747,10 +747,10 @@ get_another_key_digit:
     ld CTR_COUNTER+6 ;
     addi #1
     st CTR_COUNTER+6
-    jnc rc5_round
-    ld CTR_COUNTER+7 ;
-    addi #1
-    st CTR_COUNTER+7
+;    jnc rc5_round
+;    ld CTR_COUNTER+7 ;
+;    addi #1
+;    st CTR_COUNTER+7
     jmp rc5_round
 
 got_next_key_digit: ; rc5_round returns here
@@ -858,6 +858,7 @@ rc5_round:
     st TODO_LIST_AA+13
     st TODO_LIST_AA+14
     st TODO_LIST_AA+15
+    st TODO_LIST_AA+16
 
     st TODO_LIST_BB+0
     st TODO_LIST_BB+1

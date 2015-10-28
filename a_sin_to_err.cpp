@@ -98,7 +98,7 @@ int main(void)
   rc5_setup(&key[0]);
   
 // Nibbler assembly code generation 
-#if 1
+#if 0
 printf("#define EXPANDED_KEY_TABLE $c0 ; %d 32 bit words = %d nibbles\n", t, t * 8);
 // Order by nibble value to reduce number of lit commands
 std::set<int> nibble_addr[16];
