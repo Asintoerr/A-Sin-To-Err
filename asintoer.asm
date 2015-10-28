@@ -35,23 +35,25 @@
 #define TODO_LIST_BB       $6f ; 17 nibbles
 
 ; Debouncing
-#define R0S     $80 ; keypad row 0 state, 1 nibble
-#define R0C     $81 ; keypad row 0 count, 1 nibble
-#define R0L     $82 ; keypad row 0 previous state, 1 nibble
+#define R0S     $80            ; keypad row 0 state, 1 nibble
+#define R0C     $81            ; keypad row 0 count, 1 nibble
+#define R0L     $82            ; keypad row 0 previous state, 1 nibble
 
-#define R1S     $83 ; keypad row 1 state, 1 nibble
-#define R1C     $84 ; keypad row 1 count, 1 nibble
-#define R1L     $85 ; keypad row 1 previous state, 1 nibble
+#define R1S     $83            ; keypad row 1 state, 1 nibble
+#define R1C     $84            ; keypad row 1 count, 1 nibble
+#define R1L     $85            ; keypad row 1 previous state, 1 nibble
 
-#define R2S     $86 ; keypad row 2 state, 1 nibble
-#define R2C     $87 ; keypad row 2 count, 1 nibble
-#define R2L     $88 ; keypad row 2 previous state, 1 nibble
+#define R2S     $86            ; keypad row 2 state, 1 nibble
+#define R2C     $87            ; keypad row 2 count, 1 nibble
+#define R2L     $88            ; keypad row 2 previous state, 1 nibble
 
-#define R3S     $89 ; keypad row 3 state, 1 nibble
-#define R3C     $8a ; keypad row 3 count, 1 nibble
-#define R3L     $8b ; keypad row 3 previous state, 1 nibble
+#define R3S     $89            ; keypad row 3 state, 1 nibble
+#define R3C     $8a            ; keypad row 3 count, 1 nibble
+#define R3L     $8b            ; keypad row 3 previous state, 1 nibble
 
-                               ; 3 * 16 - 12 nibbles empty
+; CTR encryption
+#define KEY_DIG $8c            ; keystream digit, 1 nibble
+                               ; 3 * 16 - 13 nibbles empty
 
 ; Pre-expanded RC5 key table
 #define EXPANDED_KEY_TABLE_A0 $c0
@@ -721,12 +723,49 @@ new_digit:
     
     ; Encrypt NEW_DIG here ===============================================================
 +
+    ; get KEY_DIG
+    ;;temporary, for debugging only
+    ld KEY_DIG
+    addi #1
+    cmpi #10
+    jnz +
+    lit #0
++   st KEY_DIG
+    
+    ; Compute 10's complement of plaintext, store in TEMP
+    ld NEW_DIG
+    nori #0         ; NOT, same as 16's complement
+    addi #11
+    cmpi #10
+    jnz +
+    lit #0
++   st TEMP
 
+    ; Compute 10's complement of key
+    ld KEY_DIG
+    nori #0         ; NOT, same as 16's complement
+    addi #11
+    cmpi #10
+    jnz +
+    lit #0
+    
+    ; Add 10's complements
++   addm TEMP
+    jc +
+    cmpi #10 ; ??
+    jnc ++
++   addi #6
+    
+    ; Done with encryption
+++  st NEW_DIG
+    jmp show_new_dig
+    
 next_nonce:
     ld NONCE_DIGITS
     addi #1
     st NONCE_DIGITS
-        
+
+show_new_dig:        
     ; Shift old digits to make space for the new =========================================
     ld DD2
     st DD3
