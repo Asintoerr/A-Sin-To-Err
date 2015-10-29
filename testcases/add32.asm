@@ -1,4 +1,4 @@
-; 32 bit addition
+; 32 bit addition test case
 
 #define FIRST_OPERAND    $0 ; 32 bits = 8 nibbles
 #define SECOND_OPERAND   $8

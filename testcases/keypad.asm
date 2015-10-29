@@ -1,3 +1,5 @@
+; Matrix keypad test case
+
 #define DD0     $33 ; display digit 0, 1 nibble
 #define DD1     $34 ; display digit 1, 1 nibble
 #define DD2     $35 ; display digit 2, 1 nibble

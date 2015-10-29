@@ -1,4 +1,4 @@
-; RC5 encryption
+; RC5 encryption test case
 
 ; Input
 #define CTR_NONCE           $0 ; 32 bits = 8 nibbles

@@ -1,3 +1,5 @@
+; LED display test case
+
     lit #0
     out #1
 
