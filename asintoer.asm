@@ -401,11 +401,6 @@
     st CTR_COUNTER+6
     st CTR_COUNTER+7
     
-    st DD0
-    st DD1
-    st DD2
-    st DD3
-
     st NONCE_DIGITS
 
     st R0S
@@ -424,16 +419,27 @@
     st R3C
     st R3L
 
+    ; Initial state of LED display, can be key or version ID.
+    ; Hex values preferred to distinguish from nonce.
+    lit #$e
+    st DD0
+    lit #$2
+    st DD1
+    lit #$5
+    st DD2
+    lit #$a
+    st DD3
+
 main_loop:
     ld DD0 ; Show digit 0, select row 0 of keypad matrix =================================
     out #0
     lit #1
     out #1
     
-    lit #$f ; Delay
+    lit #$8 ; Delay
     st DELAY0
     st DELAY1
---  lit #$f
+--  lit #$8 ; Delay
 -   jz +
     addi #-1
     jmp -
@@ -490,10 +496,10 @@ main_loop:
     lit #2
     out #1
     
-    lit #$f ; Delay
+    lit #$8 ; Delay
     st DELAY0
     st DELAY1
---  lit #$f
+--  lit #$8 ; Delay
 -   jz +
     addi #-1
     jmp -
@@ -550,10 +556,10 @@ main_loop:
     lit #4
     out #1
     
-    lit #$f ; Delay
+    lit #$8 ; Delay
     st DELAY0
     st DELAY1
---  lit #$f
+--  lit #$8 ; Delay
 -   jz +
     addi #-1
     jmp -
@@ -610,10 +616,10 @@ main_loop:
     lit #8
     out #1
     
-    lit #$f ; Delay
+    lit #$8 ; Delay
     st DELAY0
     st DELAY1
---  lit #$f
+--  lit #$8 ; Delay
 -   jz +
     addi #-1
     jmp -
