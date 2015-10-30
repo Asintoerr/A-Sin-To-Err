@@ -11,14 +11,14 @@ to do it is by using [straddling checkerboard](https://en.wikipedia.org/wiki/VIC
 |   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 |---|---|---|---|---|---|---|---|---|---|---|
 |   | A |   | S | I | N |   | T | O | E | R |
-| 1 | B | C | D | F | G | H | J | K | L | M |
-| 5 | P | Q | U | V | W | X | Y | Z | . | / |
+| *1* | B | C | D | F | G | H | J | K | L | M |
+| *5* | P | Q | U | V | W | X | Y | Z | . | / |
 
 Letters in the unmarked row are represented by one digit (column number), e.g., N becomes 4. 
 
-Letters in the other two rows are represented by two digits (row then column), e.g., W becomes 54.
+Letters in the other two rows are represented by two digits (row, then column), e.g., W becomes 54.
 
-Numbers are enclosed in / symbols (59) and each number is repeated twice, e.g., 42 becomes 59442259.
+Numbers are enclosed in / symbols (59), then each number is repeated twice, e.g., 42 becomes 59442259.
 
 Example encoding of text as stream of digits using straddling checkerboard:
 
@@ -33,15 +33,13 @@ Message begins with 8 digit nonce followed by stream of encrypted digits. Nonce 
 secret, but every value should only be used once. It is similar to page identifier of one 
 time pad.
 
-Example:
+To encrypt, type nonce followed by encoded stream and record message shown on the LED 
+display.
 
 | Nonce     | 5551 | 8424 |      |      |      |      |
 |-----------|------|------|------|------|------|------|
 | Encoded   |      |      | 1581 | 8187 | 5479 | 1812 |
 | Message   | 5551 | 8424 | 6592 | 9162 | 3839 | 2885 |
-
-To encrypt, type nonce followed by encoded stream and record message shown on the LED 
-display.
 
 Decryption
 ----------
@@ -78,13 +76,13 @@ Compile asintoer2.asm on Windows to create ROM for Nibbler:
 Implementation Details
 ----------------------
 
-[RC5](https://en.wikipedia.org/wiki/RC5) in [CTR mode](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Counter_.28CTR.29)
-is used. For ease of implementation, only one nibble from each block is used. Nibbles that
-do not correspond to BCD are discarded.
+Encryption is [RC5](https://en.wikipedia.org/wiki/RC5) in [CTR mode](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Counter_.28CTR.29).
+For ease of implementation only one nibble from each block is used, and nibbles that
+do not correspond to a BCD are simply discarded.
 
 Encryption function applied to each digit is (20 - plaintext - key) % 10. It is 
-involuntory, meaning that f(f(x)) = x. Decryption function is the same as encryption,
-(20 - ciphertext - key).
+[involutory](https://en.wikipedia.org/wiki/Involution_(mathematics)), meaning that 
+f(f(x)) = x. Decryption function is the same as encryption, (20 - ciphertext - key).
 
 Known Limitations
 -----------------
@@ -96,7 +94,7 @@ every time is impractical.
 Hardware Changes
 ----------------
 
-Cipher machine has the following hardware changes compared to the original Nibbler:
+The only hardware changes compared to the original Nibbler are input and output:
 
 * Four seven-segment LED digits instead of LCD. HEF4543B decoders are connected to OUT0,
 /LE lines to OUT1. Rightmost digit is bit 0 of OUT1.
