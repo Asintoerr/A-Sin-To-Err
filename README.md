@@ -11,8 +11,8 @@ to do it is by using [straddling checkerboard](https://en.wikipedia.org/wiki/VIC
 |   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
 |---|---|---|---|---|---|---|---|---|---|---|
 |   | A |   | S | I | N |   | T | O | E | R |
-| *1* | B | C | D | F | G | H | J | K | L | M |
-| *5* | P | Q | U | V | W | X | Y | Z | . | / |
+| **1** | B | C | D | F | G | H | J | K | L | M |
+| **5** | P | Q | U | V | W | X | Y | Z | . | / |
 
 Letters in the unmarked row are represented by one digit (column number), e.g., N becomes 4. 
 
@@ -82,7 +82,7 @@ do not correspond to a BCD are simply discarded.
 
 Encryption function applied to each digit is (20 - plaintext - key) % 10. It is 
 [involutory](https://en.wikipedia.org/wiki/Involution_(mathematics)), meaning that 
-f(f(x)) = x. Decryption function is the same as encryption, (20 - ciphertext - key).
+f(f(x)) = x, so decryption function is the same as encryption: (20 - ciphertext - key).
 
 Known Limitations
 -----------------
