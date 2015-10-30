@@ -192,9 +192,9 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-fprintf(stderr, "expanded key table 0: %08x %08x\n", expanded_key_table[0], expanded_key_table[1]);
-fprintf(stderr, "expanded key table 1: %08x %08x\n", expanded_key_table[2], expanded_key_table[3]);
-fprintf(stderr, "expanded key table 2: %08x %08x\n", expanded_key_table[4], expanded_key_table[5]);
+//fprintf(stderr, "expanded key table 0: %08x %08x\n", expanded_key_table[0], expanded_key_table[1]);
+//fprintf(stderr, "expanded key table 1: %08x %08x\n", expanded_key_table[2], expanded_key_table[3]);
+//fprintf(stderr, "expanded key table 2: %08x %08x\n", expanded_key_table[4], expanded_key_table[5]);
 
   uint32_t text[2] = { 0 }; // text[0] is nonce, text[1] is counter for CTR mode
   int c;
