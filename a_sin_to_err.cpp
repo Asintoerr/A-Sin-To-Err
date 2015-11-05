@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
     }
     printf("\n"
            "cycle_start:\n"
-           "    ld TODO_LIST+0\n"
+           "    ld TODO_LIST+1\n"
            "    jnz +\n"
            "\n");
     for (int i = 0; i < 8; i++) {
@@ -124,10 +124,10 @@ int main(int argc, char* argv[])
     }
     printf("\n"
            "    lit #1\n"
-           "    st TODO_LIST+0\n"
+           "    st TODO_LIST+1\n"
            "    jmp add32_into_rc5_a\n"
            "\n");
-    printf("+   ld TODO_LIST\n"
+    printf("+   ld TODO_LIST+3\n"
            "    jnz +\n"
            "\n");
     for (int i = 0; i < 8; i++) {
@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
     }
     printf("\n"
            "    lit #1\n"
-           "    st TODO_LIST\n"
+           "    st TODO_LIST+3\n"
            "    jmp add32_into_rc5_b\n"
            "\n");
     for (int j = 1; j <= 16; j++) {

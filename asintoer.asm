@@ -27,27 +27,25 @@
 ; Where we are in the process
 #define NONCE_DIGITS      $3b ; number of nonce digits entered
 
-; Flags for RC5 unrolled loop
-#define TODO_LIST         $3c ; 17*4 nibbles
-
 ; Debouncing
-#define R0S     $80            ; keypad row 0 state, 1 nibble
-#define R0C     $81            ; keypad row 0 count, 1 nibble
-#define R0L     $82            ; keypad row 0 previous state, 1 nibble
+#define R0S               $3c ; keypad row 0 state, 1 nibble
+#define R0C               $3d ; keypad row 0 count, 1 nibble
+#define R0L               $3e ; keypad row 0 previous state, 1 nibble
 
-#define R1S     $83            ; keypad row 1 state, 1 nibble
-#define R1C     $84            ; keypad row 1 count, 1 nibble
-#define R1L     $85            ; keypad row 1 previous state, 1 nibble
+#define R1S               $3f ; keypad row 1 state, 1 nibble
+#define R1C               $40 ; keypad row 1 count, 1 nibble
+#define R1L               $41 ; keypad row 1 previous state, 1 nibble
 
-#define R2S     $86            ; keypad row 2 state, 1 nibble
-#define R2C     $87            ; keypad row 2 count, 1 nibble
-#define R2L     $88            ; keypad row 2 previous state, 1 nibble
+#define R2S               $42 ; keypad row 2 state, 1 nibble
+#define R2C               $43 ; keypad row 2 count, 1 nibble
+#define R2L               $44 ; keypad row 2 previous state, 1 nibble
 
-#define R3S     $89            ; keypad row 3 state, 1 nibble
-#define R3C     $8a            ; keypad row 3 count, 1 nibble
-#define R3L     $8b            ; keypad row 3 previous state, 1 nibble
+#define R3S               $45 ; keypad row 3 state, 1 nibble
+#define R3C               $46 ; keypad row 3 count, 1 nibble
+#define R3L               $47 ; keypad row 3 previous state, 1 nibble
 
-                               ; 3 * 16 - 12 nibbles empty
+; Flags for RC5 unrolled loop
+#define TODO_LIST         $48 ; 17*4 nibbles
 
     ; Initialization
     lit #$0
@@ -87,7 +85,7 @@
     st R3L
 
     ; Initial state of LED display, can be key or version ID.
-    ; Hex values preferred to distinguish from nonce.
+    ; Hex values above 9 are shown as blank.
     lit #$e
     st DD0
     lit #$2
@@ -369,6 +367,10 @@ new_digit:
 +   ld NONCE_DIGITS
     cmpi #4
     jnz +
+    lit #$e ; blank leading digits to indicate new group
+    st DD2
+    st DD1
+    st DD0
     ld NEW_DIG
     st CTR_NONCE+4
     jmp next_nonce
