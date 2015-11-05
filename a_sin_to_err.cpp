@@ -101,8 +101,16 @@ int main(int argc, char* argv[])
   if (argc > 1) {
     // Nibbler assembly code generation 
     printf("; Automatically generated code follows, see a_sin_to_err.cpp =============================\n"
-           "\n"    
-           "    ld TODO_LIST_A+0\n"
+           "\n"
+           "rc5_process_block:\n"
+           "    lit #0\n"
+          );    
+    for (int i = 0; i < 4 * (r + 1); i++) {
+      printf("    st TODO_LIST+%d\n", i);
+    }
+    printf("\n"
+           "cycle_start:\n"
+           "    ld TODO_LIST+0\n"
            "    jnz +\n"
            "\n");
     for (int i = 0; i < 8; i++) {
@@ -116,10 +124,10 @@ int main(int argc, char* argv[])
     }
     printf("\n"
            "    lit #1\n"
-           "    st TODO_LIST_A+0\n"
+           "    st TODO_LIST+0\n"
            "    jmp add32_into_rc5_a\n"
            "\n");
-    printf("+   ld TODO_LIST_B+0\n"
+    printf("+   ld TODO_LIST\n"
            "    jnz +\n"
            "\n");
     for (int i = 0; i < 8; i++) {
@@ -133,13 +141,13 @@ int main(int argc, char* argv[])
     }
     printf("\n"
            "    lit #1\n"
-           "    st TODO_LIST_B+0\n"
+           "    st TODO_LIST\n"
            "    jmp add32_into_rc5_b\n"
            "\n");
     for (int j = 1; j <= 16; j++) {
       printf("; Round %d\n"
              "\n", j);
-      printf("+   ld TODO_LIST_AA+%d\n"
+      printf("+   ld TODO_LIST+%d\n"
              "    jnz +\n"
              "\n"
              "    ld RC5_B+0\n"
@@ -148,21 +156,21 @@ int main(int argc, char* argv[])
              "    st ROTL_COUNT+1"
              "\n"
              "    lit #1\n"
-             "    st TODO_LIST_AA+%d\n"
+             "    st TODO_LIST+%d\n"
              "    jmp xor_rotl_into_a\n"
              "\n"
-             "+   ld TODO_LIST_A+%d\n"
-             "    jnz +\n\n", j, j, j);
+             "+   ld TODO_LIST+%d\n"
+             "    jnz +\n\n", j*4, j*4, j*4+1);
       for (int i = 0; i < 8; i++) {
         printf("    lit #$%x\n", (expanded_key_table[j * 2] >> (i * 4)) & 0xf);
         printf("    st OPERAND_B+%d\n", i);
       }
       printf("\n"
              "    lit #1\n"
-             "    st TODO_LIST_A+%d\n"
+             "    st TODO_LIST+%d\n"
              "    jmp add32_into_rc5_a\n"
-             "\n", j);
-      printf("+   ld TODO_LIST_BB+%d\n"
+             "\n", j*4+1);
+      printf("+   ld TODO_LIST+%d\n"
              "    jnz +\n"
              "\n"
              "    ld RC5_A+0\n"
@@ -171,20 +179,20 @@ int main(int argc, char* argv[])
              "    st ROTL_COUNT+1"
              "\n"
              "    lit #1\n"
-             "    st TODO_LIST_BB+%d\n"
+             "    st TODO_LIST+%d\n"
              "    jmp xor_rotl_into_a\n"
              "\n"
-             "+   ld TODO_LIST_B+%d\n"
-             "    jnz +\n\n", j, j, j);
+             "+   ld TODO_LIST+%d\n"
+             "    jnz +\n\n", j*4+2, j*4+2, j*4+3);
       for (int i = 0; i < 8; i++) {
         printf("    lit #$%x\n", (expanded_key_table[j * 2 + 1] >> (i * 4)) & 0xf);
         printf("    st OPERAND_B+%d\n", i);
       }
       printf("\n"
              "    lit #1\n"
-             "    st TODO_LIST_B+%d\n"
+             "    st TODO_LIST+%d\n"
              "    jmp add32_into_rc5_b\n"
-             "\n", j);
+             "\n", j*4+3);
     }
     printf("+   jmp got_next_key_digit"
            "\n"

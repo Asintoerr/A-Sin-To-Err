@@ -28,10 +28,7 @@
 #define NONCE_DIGITS      $3b ; number of nonce digits entered
 
 ; Flags for RC5 unrolled loop
-#define TODO_LIST_A        $3c ; 17 nibbles
-#define TODO_LIST_B        $4d ; 17 nibbles
-#define TODO_LIST_AA       $5e ; 17 nibbles
-#define TODO_LIST_BB       $6f ; 17 nibbles
+#define TODO_LIST         $3c ; 17*4 nibbles
 
 ; Debouncing
 #define R0S     $80            ; keypad row 0 state, 1 nibble
@@ -921,79 +918,3 @@ rotate_more:
     addi #-1
     st BUFFER_VARIABLE
     jmp rotate_more
-
-rc5_process_block:
-    lit #0
-    st TODO_LIST_A+0
-    st TODO_LIST_A+1
-    st TODO_LIST_A+2
-    st TODO_LIST_A+3
-    st TODO_LIST_A+4
-    st TODO_LIST_A+5
-    st TODO_LIST_A+6
-    st TODO_LIST_A+7
-    st TODO_LIST_A+8
-    st TODO_LIST_A+9
-    st TODO_LIST_A+10
-    st TODO_LIST_A+11
-    st TODO_LIST_A+12
-    st TODO_LIST_A+13
-    st TODO_LIST_A+14
-    st TODO_LIST_A+15
-    st TODO_LIST_A+16
-
-    st TODO_LIST_B+0
-    st TODO_LIST_B+1
-    st TODO_LIST_B+2
-    st TODO_LIST_B+3
-    st TODO_LIST_B+4
-    st TODO_LIST_B+5
-    st TODO_LIST_B+6
-    st TODO_LIST_B+7
-    st TODO_LIST_B+8
-    st TODO_LIST_B+9
-    st TODO_LIST_B+10
-    st TODO_LIST_B+11
-    st TODO_LIST_B+12
-    st TODO_LIST_B+13
-    st TODO_LIST_B+14
-    st TODO_LIST_B+15
-    st TODO_LIST_B+16
-
-    st TODO_LIST_AA+0
-    st TODO_LIST_AA+1
-    st TODO_LIST_AA+2
-    st TODO_LIST_AA+3
-    st TODO_LIST_AA+4
-    st TODO_LIST_AA+5
-    st TODO_LIST_AA+6
-    st TODO_LIST_AA+7
-    st TODO_LIST_AA+8
-    st TODO_LIST_AA+9
-    st TODO_LIST_AA+10
-    st TODO_LIST_AA+11
-    st TODO_LIST_AA+12
-    st TODO_LIST_AA+13
-    st TODO_LIST_AA+14
-    st TODO_LIST_AA+15
-    st TODO_LIST_AA+16
-
-    st TODO_LIST_BB+0
-    st TODO_LIST_BB+1
-    st TODO_LIST_BB+2
-    st TODO_LIST_BB+3
-    st TODO_LIST_BB+4
-    st TODO_LIST_BB+5
-    st TODO_LIST_BB+6
-    st TODO_LIST_BB+7
-    st TODO_LIST_BB+8
-    st TODO_LIST_BB+9
-    st TODO_LIST_BB+10
-    st TODO_LIST_BB+11
-    st TODO_LIST_BB+12
-    st TODO_LIST_BB+13
-    st TODO_LIST_BB+14
-    st TODO_LIST_BB+15
-    st TODO_LIST_BB+16
-
-cycle_start:
