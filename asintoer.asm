@@ -26,26 +26,28 @@
 
 ; Where we are in the process
 #define NONCE_DIGITS      $3b ; number of nonce digits entered
+#define MESSAGE_DIGITS    $3c ; 1 nibble
+#define DAMM_INTERIM      $3d ; 1 nibble
 
 ; Debouncing
-#define R0S               $3c ; keypad row 0 state, 1 nibble
-#define R0C               $3d ; keypad row 0 count, 1 nibble
-#define R0L               $3e ; keypad row 0 previous state, 1 nibble
+#define R0S               $3e ; keypad row 0 state, 1 nibble
+#define R0C               $3f ; keypad row 0 count, 1 nibble
+#define R0L               $40 ; keypad row 0 previous state, 1 nibble
 
-#define R1S               $3f ; keypad row 1 state, 1 nibble
-#define R1C               $40 ; keypad row 1 count, 1 nibble
-#define R1L               $41 ; keypad row 1 previous state, 1 nibble
+#define R1S               $41 ; keypad row 1 state, 1 nibble
+#define R1C               $42 ; keypad row 1 count, 1 nibble
+#define R1L               $43 ; keypad row 1 previous state, 1 nibble
 
-#define R2S               $42 ; keypad row 2 state, 1 nibble
-#define R2C               $43 ; keypad row 2 count, 1 nibble
-#define R2L               $44 ; keypad row 2 previous state, 1 nibble
+#define R2S               $44 ; keypad row 2 state, 1 nibble
+#define R2C               $45 ; keypad row 2 count, 1 nibble
+#define R2L               $46 ; keypad row 2 previous state, 1 nibble
 
-#define R3S               $45 ; keypad row 3 state, 1 nibble
-#define R3C               $46 ; keypad row 3 count, 1 nibble
-#define R3L               $47 ; keypad row 3 previous state, 1 nibble
+#define R3S               $47 ; keypad row 3 state, 1 nibble
+#define R3C               $48 ; keypad row 3 count, 1 nibble
+#define R3L               $49 ; keypad row 3 previous state, 1 nibble
 
 ; Flags for RC5 unrolled loop
-#define TODO_LIST         $48 ; 17*4 nibbles
+#define TODO_LIST         $4a ; 17*4 nibbles
 
     ; Initialization
     lit #$0
@@ -67,6 +69,8 @@
     st CTR_COUNTER+7
     
     st NONCE_DIGITS
+    st MESSAGE_DIGITS
+    st DAMM_INTERIM
 
     st R0S
     st R0C
@@ -393,6 +397,23 @@ new_digit:
     st CTR_NONCE+7
     jmp next_nonce
 +
+    ld MESSAGE_DIGITS ; increment digit counter
+    addi #$1
+    st MESSAGE_DIGITS
+    cmpi #$1
+    jz +
+    cmpi #$5
+    jz +
+    cmpi #$9
+    jz +
+    cmpi #$d
+    jnz ++
++
+    lit #$e ; blank leading digits to indicate new group
+    st DD2
+    st DD1
+    st DD0
+++
     ; Get next keystream digit ===========================================================
 get_another_key_digit:
     ld CTR_COUNTER+0 ; increment counter
