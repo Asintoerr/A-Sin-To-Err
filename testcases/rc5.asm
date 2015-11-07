@@ -1,4 +1,4 @@
-; RC5 encryption
+; RC5 encryption test case
 
 ; Input
 #define CTR_NONCE           $0 ; 32 bits = 8 nibbles
@@ -400,6 +400,7 @@
     st TODO_LIST_AA+13
     st TODO_LIST_AA+14
     st TODO_LIST_AA+15
+    st TODO_LIST_AA+16
 
     st TODO_LIST_BB+0
     st TODO_LIST_BB+1

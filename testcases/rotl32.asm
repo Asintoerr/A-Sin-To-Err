@@ -1,4 +1,4 @@
-; 32 bit rotate left
+; 32 bit rotate left test case
 
 #define FIRST_OPERAND    $0 ; 32 bits = 8 nibbles
 #define SECOND_OPERAND   $8 ; 5 bits <= 2 nibbles
