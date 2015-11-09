@@ -27,27 +27,26 @@
 ; Where we are in the process
 #define NONCE_DIGITS      $3b ; number of nonce digits entered
 #define MESSAGE_DIGITS    $3c ; 1 nibble
-#define DAMM_INTERIM      $3d ; 1 nibble
 
 ; Debouncing
-#define R0S               $3e ; keypad row 0 state, 1 nibble
-#define R0C               $3f ; keypad row 0 count, 1 nibble
-#define R0L               $40 ; keypad row 0 previous state, 1 nibble
+#define R0S               $3d ; keypad row 0 state, 1 nibble
+#define R0C               $3e ; keypad row 0 count, 1 nibble
+#define R0L               $3f ; keypad row 0 previous state, 1 nibble
 
-#define R1S               $41 ; keypad row 1 state, 1 nibble
-#define R1C               $42 ; keypad row 1 count, 1 nibble
-#define R1L               $43 ; keypad row 1 previous state, 1 nibble
+#define R1S               $40 ; keypad row 1 state, 1 nibble
+#define R1C               $41 ; keypad row 1 count, 1 nibble
+#define R1L               $42 ; keypad row 1 previous state, 1 nibble
 
-#define R2S               $44 ; keypad row 2 state, 1 nibble
-#define R2C               $45 ; keypad row 2 count, 1 nibble
-#define R2L               $46 ; keypad row 2 previous state, 1 nibble
+#define R2S               $43 ; keypad row 2 state, 1 nibble
+#define R2C               $44 ; keypad row 2 count, 1 nibble
+#define R2L               $45 ; keypad row 2 previous state, 1 nibble
 
-#define R3S               $47 ; keypad row 3 state, 1 nibble
-#define R3C               $48 ; keypad row 3 count, 1 nibble
-#define R3L               $49 ; keypad row 3 previous state, 1 nibble
+#define R3S               $46 ; keypad row 3 state, 1 nibble
+#define R3C               $47 ; keypad row 3 count, 1 nibble
+#define R3L               $48 ; keypad row 3 previous state, 1 nibble
 
 ; Flags for RC5 unrolled loop
-#define TODO_LIST         $4a ; 17*4 nibbles
+#define TODO_LIST         $49 ; 17*4 nibbles
 
     ; Initialization
     lit #$0
@@ -70,7 +69,6 @@
     
     st NONCE_DIGITS
     st MESSAGE_DIGITS
-    st DAMM_INTERIM
 
     st R0S
     st R0C

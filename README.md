@@ -33,13 +33,18 @@ Message begins with 8 digit nonce followed by stream of encrypted digits. Nonce 
 secret, but every value should only be used once. It is similar to page identifier of one 
 time pad.
 
-To encrypt, type nonce followed by encoded stream and record message shown on the LED 
-display.
+To encrypt, type nonce followed by encoded stream and record encrypted message shown on 
+the LED display.
 
 | Nonce     | 5551 | 8424 |      |      |      |      |
 |-----------|------|------|------|------|------|------|
 | Encoded   |      |      | 1581 | 8187 | 5479 | 1812 |
-| Message   | 5551 | 8424 | 6592 | 9162 | 3839 | 2885 |
+| Message   | 5551 | 8424 | 3279 | 9875 | 7770 | 9178 |
+
+From the command line:
+
+    echo "5551 8424 1581 8187 5479 1812" | ./a_sin_to_err
+    5551 8424 3279 9875  7770 9178
 
 Decryption
 ----------
@@ -49,6 +54,11 @@ To decrypt, type message and record decrypted stream shown on the LED display.
 | Message     | 5551 | 8424 | 6592 | 9162 | 3839 | 2885 |
 |-------------|------|------|------|------|------|------|
 | Decrypted   |      |      | 1581 | 8187 | 5479 | 1812 |
+
+From the command line:
+
+    echo "5551 8424 3279 9875  7770 9178" | ./a_sin_to_err
+    5551 8424 1581 8187  5479 1812
 
 Decoding
 --------

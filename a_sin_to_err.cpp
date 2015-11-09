@@ -23,7 +23,7 @@ std::uint32_t rotl(std::uint32_t v, std::uint32_t shift)
   return (v << shift) | (v >> (32 - shift));
 }
 
-const uint8_t r = 16; // rounds
+const uint8_t r = 20; // rounds
 const uint8_t t = 2 * (r + 1); // the number of words in the expanded key table
 uint32_t expanded_key_table[t];
 
@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
            "    st TODO_LIST+3\n"
            "    jmp add32_into_rc5_b\n"
            "\n");
-    for (int j = 1; j <= 16; j++) {
+    for (int j = 1; j <= r; j++) {
       printf("; Round %d\n"
              "\n", j);
       printf("+   ld TODO_LIST+%d\n"
