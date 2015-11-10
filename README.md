@@ -26,6 +26,10 @@ Example encoding of text as stream of digits using straddling checkerboard:
 |-----------|---|---|---|---|---|---|---|---|---|---|
 | Encoded   | 15|  8| 18| 18|  7| 54|  7|  9| 18| 12|
 
+From the command line:
+    echo "Hello world" | ./straddling_checkerboard
+    1581 8187 5479 1812  
+
 Encryption
 ----------
 
@@ -69,6 +73,11 @@ Ignore first 8 digits (nonce) and decode the rest using straddling checkerboard.
 |-------------|---|---|---|---|---|---|---|---|---|---|
 | Decoded     | H | E | L | L | O | W | O | R | L | D |
 
+From the command line:
+
+    echo "1581 8187  5479 1812" | ./straddling_checkerboard
+    HELLOWORLD
+
 Building
 --------
 
@@ -82,6 +91,10 @@ random, e.g., 128 coin tosses. Then build code generator:
 Compile asintoer2.asm on Windows to create ROM for Nibbler:
 
     assembler -o asintoer2.bin asintoerr2.asm
+    
+Compile optional encoder/decoder:
+    
+    make straddling_checkerboard
 
 Implementation Details
 ----------------------

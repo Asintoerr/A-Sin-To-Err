@@ -3,17 +3,17 @@
 
 static void encrypt(int d)
 {
-  static unsigned pos_in_group = 0;
+  static unsigned count = 0;
   printf("%d", d);
-  pos_in_group++;
-  if (pos_in_group % 5 == 0) {
-    printf(" ");
-  }
-  if (pos_in_group % 25 == 10) {
-    printf(" ");
-  }
-  if (pos_in_group % 25 == 0) {
-    printf("\n");
+  switch (++count) {
+    case  4: putchar(' '); break;
+    case  8: putchar(' '); break;
+    case 12: putchar(' '); break;
+    case 16: putchar(' '); putchar(' '); break;
+    case 20: putchar(' '); break;
+    case 24: putchar(' '); break;
+    case 28: putchar(' '); break;
+    case 32: putchar('\n'); count = 0; break;
   }
 }
 
