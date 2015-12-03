@@ -90,7 +90,7 @@ random, e.g., 128 coin tosses. Then build code generator:
 
 Compile asintoer2.asm on Windows to create ROM for Nibbler:
 
-    assembler -o asintoer2.bin asintoerr2.asm
+    assembler -o asintoer2.bin asintoer2.asm
     
 Compile optional encoder/decoder:
     

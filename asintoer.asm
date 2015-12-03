@@ -99,9 +99,9 @@
 
 main_loop:
     ld DD0 ; Show digit 0, select row 0 of keypad matrix =================================
-    out #0
+    out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110 responds to any port number where bit 0 is 0, e.g., #$e=1110
     lit #1
-    out #1
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
     
     lit #$8 ; Delay
     st DELAY0
@@ -156,12 +156,12 @@ main_loop:
     jmp new_digit
 +
 ++  lit #0
-    out #1 ; Reset control bit
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
     
     ld DD1 ; Show digit 1, select row 1 of keypad matrix =================================
-    out #0
+    out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
     lit #2
-    out #1
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
     
     lit #$8 ; Delay
     st DELAY0
@@ -216,12 +216,12 @@ main_loop:
     jmp new_digit
 +
 ++  lit #0
-    out #1 ; Reset control bit
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
 
     ld DD2 ; Show digit 2, select row 2 of keypad matrix =================================
-    out #0
+    out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
     lit #4
-    out #1
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
     
     lit #$8 ; Delay
     st DELAY0
@@ -276,12 +276,12 @@ main_loop:
     jmp new_digit
 +
 ++  lit #0
-    out #1 ; Reset control bit
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
 
     ld DD3 ; Show digit 3, select row 3 of keypad matrix =================================
-    out #0
+    out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
     lit #8
-    out #1
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
     
     lit #$8 ; Delay
     st DELAY0
@@ -336,7 +336,7 @@ main_loop:
     jmp main_loop
 +
 ++  lit #0
-    out #1 ; Reset control bit
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
     jmp main_loop
     
 new_digit:
