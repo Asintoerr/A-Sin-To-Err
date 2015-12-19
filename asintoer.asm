@@ -26,31 +26,27 @@
 
 ; Where we are in the process
 #define NONCE_DIGITS      $3b ; number of nonce digits entered
-
-; Flags for RC5 unrolled loop
-#define TODO_LIST_A        $3c ; 17 nibbles
-#define TODO_LIST_B        $4d ; 17 nibbles
-#define TODO_LIST_AA       $5e ; 17 nibbles
-#define TODO_LIST_BB       $6f ; 17 nibbles
+#define GROUP_DIGITS      $3c ; 1 nibble
 
 ; Debouncing
-#define R0S     $80            ; keypad row 0 state, 1 nibble
-#define R0C     $81            ; keypad row 0 count, 1 nibble
-#define R0L     $82            ; keypad row 0 previous state, 1 nibble
+#define R0S               $3d ; keypad row 0 state, 1 nibble
+#define R0C               $3e ; keypad row 0 count, 1 nibble
+#define R0L               $3f ; keypad row 0 previous state, 1 nibble
 
-#define R1S     $83            ; keypad row 1 state, 1 nibble
-#define R1C     $84            ; keypad row 1 count, 1 nibble
-#define R1L     $85            ; keypad row 1 previous state, 1 nibble
+#define R1S               $40 ; keypad row 1 state, 1 nibble
+#define R1C               $41 ; keypad row 1 count, 1 nibble
+#define R1L               $42 ; keypad row 1 previous state, 1 nibble
 
-#define R2S     $86            ; keypad row 2 state, 1 nibble
-#define R2C     $87            ; keypad row 2 count, 1 nibble
-#define R2L     $88            ; keypad row 2 previous state, 1 nibble
+#define R2S               $43 ; keypad row 2 state, 1 nibble
+#define R2C               $44 ; keypad row 2 count, 1 nibble
+#define R2L               $45 ; keypad row 2 previous state, 1 nibble
 
-#define R3S     $89            ; keypad row 3 state, 1 nibble
-#define R3C     $8a            ; keypad row 3 count, 1 nibble
-#define R3L     $8b            ; keypad row 3 previous state, 1 nibble
+#define R3S               $46 ; keypad row 3 state, 1 nibble
+#define R3C               $47 ; keypad row 3 count, 1 nibble
+#define R3L               $48 ; keypad row 3 previous state, 1 nibble
 
-                               ; 3 * 16 - 12 nibbles empty
+; Flags for RC5 unrolled loop
+#define TODO_LIST         $49 ; 17*4 nibbles
 
     ; Initialization
     lit #$0
@@ -72,6 +68,7 @@
     st CTR_COUNTER+7
     
     st NONCE_DIGITS
+    st GROUP_DIGITS
 
     st R0S
     st R0C
@@ -90,7 +87,7 @@
     st R3L
 
     ; Initial state of LED display, can be key or version ID.
-    ; Hex values preferred to distinguish from nonce.
+    ; Hex values above 9 are shown as blank.
     lit #$e
     st DD0
     lit #$2
@@ -101,10 +98,13 @@
     st DD3
 
 main_loop:
+    lit #0
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+
     ld DD0 ; Show digit 0, select row 0 of keypad matrix =================================
-    out #0
+    out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110 responds to any port number where bit 0 is 0, e.g., #$e=1110
     lit #1
-    out #1
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
     
     lit #$8 ; Delay
     st DELAY0
@@ -159,12 +159,12 @@ main_loop:
     jmp new_digit
 +
 ++  lit #0
-    out #1 ; Reset control bit
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
     
     ld DD1 ; Show digit 1, select row 1 of keypad matrix =================================
-    out #0
+    out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
     lit #2
-    out #1
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
     
     lit #$8 ; Delay
     st DELAY0
@@ -219,12 +219,12 @@ main_loop:
     jmp new_digit
 +
 ++  lit #0
-    out #1 ; Reset control bit
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
 
     ld DD2 ; Show digit 2, select row 2 of keypad matrix =================================
-    out #0
+    out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
     lit #4
-    out #1
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
     
     lit #$8 ; Delay
     st DELAY0
@@ -279,12 +279,12 @@ main_loop:
     jmp new_digit
 +
 ++  lit #0
-    out #1 ; Reset control bit
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
 
     ld DD3 ; Show digit 3, select row 3 of keypad matrix =================================
-    out #0
+    out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
     lit #8
-    out #1
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
     
     lit #$8 ; Delay
     st DELAY0
@@ -326,6 +326,15 @@ main_loop:
     st TEMP
     jnc +
     ; Button *
+; test only insert start =================================================================
+    ld RC5_A
+    st DD3
+    lit #$f 
+    st DD2
+    st DD1
+    ld GROUP_DIGITS
+    st DD0
+; test only insert end =================================================================
     jmp main_loop
 +   addm TEMP
     st TEMP
@@ -336,15 +345,31 @@ main_loop:
     st TEMP
     jnc +
     ; Button #
-    jmp main_loop
+; test only insert start =================================================================
+    ld CTR_COUNTER+2
+    st DD3
+    ld CTR_COUNTER+1
+    st DD2
+    ld CTR_COUNTER+0
+    st DD1
+    lit #$f
+    st DD0
+; test only insert end =================================================================
 +
-++  lit #0
-    out #1 ; Reset control bit
-    jmp main_loop
+++  jmp main_loop
     
 new_digit:
     ; New digit in accumulator, see if it's part of nonce ================================
     st NEW_DIG
+    
+    lit #0 ; Blank display during long calculation
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+    lit #$f
+    out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
+    lit #0
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+    
     ld NONCE_DIGITS
     cmpi #0
     jnz +
@@ -372,6 +397,10 @@ new_digit:
 +   ld NONCE_DIGITS
     cmpi #4
     jnz +
+    lit #$e ; blank leading digits to indicate new group
+    st DD2
+    st DD1
+    st DD0
     ld NEW_DIG
     st CTR_NONCE+4
     jmp next_nonce
@@ -394,6 +423,23 @@ new_digit:
     st CTR_NONCE+7
     jmp next_nonce
 +
+    ld GROUP_DIGITS ; increment digit counter
+    addi #$1
+    st GROUP_DIGITS
+    cmpi #$1
+    jz +
+    cmpi #$5
+    jz +
+    cmpi #$9
+    jz +
+    cmpi #$d
+    jnz ++
++
+    lit #$e ; blank leading digits to indicate new group
+    st DD2
+    st DD1
+    st DD0
+++
     ; Get next keystream digit ===========================================================
 get_another_key_digit:
     ld CTR_COUNTER+0 ; increment counter
@@ -921,79 +967,3 @@ rotate_more:
     addi #-1
     st BUFFER_VARIABLE
     jmp rotate_more
-
-rc5_process_block:
-    lit #0
-    st TODO_LIST_A+0
-    st TODO_LIST_A+1
-    st TODO_LIST_A+2
-    st TODO_LIST_A+3
-    st TODO_LIST_A+4
-    st TODO_LIST_A+5
-    st TODO_LIST_A+6
-    st TODO_LIST_A+7
-    st TODO_LIST_A+8
-    st TODO_LIST_A+9
-    st TODO_LIST_A+10
-    st TODO_LIST_A+11
-    st TODO_LIST_A+12
-    st TODO_LIST_A+13
-    st TODO_LIST_A+14
-    st TODO_LIST_A+15
-    st TODO_LIST_A+16
-
-    st TODO_LIST_B+0
-    st TODO_LIST_B+1
-    st TODO_LIST_B+2
-    st TODO_LIST_B+3
-    st TODO_LIST_B+4
-    st TODO_LIST_B+5
-    st TODO_LIST_B+6
-    st TODO_LIST_B+7
-    st TODO_LIST_B+8
-    st TODO_LIST_B+9
-    st TODO_LIST_B+10
-    st TODO_LIST_B+11
-    st TODO_LIST_B+12
-    st TODO_LIST_B+13
-    st TODO_LIST_B+14
-    st TODO_LIST_B+15
-    st TODO_LIST_B+16
-
-    st TODO_LIST_AA+0
-    st TODO_LIST_AA+1
-    st TODO_LIST_AA+2
-    st TODO_LIST_AA+3
-    st TODO_LIST_AA+4
-    st TODO_LIST_AA+5
-    st TODO_LIST_AA+6
-    st TODO_LIST_AA+7
-    st TODO_LIST_AA+8
-    st TODO_LIST_AA+9
-    st TODO_LIST_AA+10
-    st TODO_LIST_AA+11
-    st TODO_LIST_AA+12
-    st TODO_LIST_AA+13
-    st TODO_LIST_AA+14
-    st TODO_LIST_AA+15
-    st TODO_LIST_AA+16
-
-    st TODO_LIST_BB+0
-    st TODO_LIST_BB+1
-    st TODO_LIST_BB+2
-    st TODO_LIST_BB+3
-    st TODO_LIST_BB+4
-    st TODO_LIST_BB+5
-    st TODO_LIST_BB+6
-    st TODO_LIST_BB+7
-    st TODO_LIST_BB+8
-    st TODO_LIST_BB+9
-    st TODO_LIST_BB+10
-    st TODO_LIST_BB+11
-    st TODO_LIST_BB+12
-    st TODO_LIST_BB+13
-    st TODO_LIST_BB+14
-    st TODO_LIST_BB+15
-    st TODO_LIST_BB+16
-
-cycle_start:

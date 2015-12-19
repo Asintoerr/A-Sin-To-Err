@@ -8,9 +8,9 @@ Encoding
 Before encryption, plaintext needs to be converted to a stream of decimal digits. One way 
 to do it is by using [straddling checkerboard](https://en.wikipedia.org/wiki/VIC_cipher#Straddling_checkerboard).
 
-|   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
-|---|---|---|---|---|---|---|---|---|---|---|
-|   | A |   | S | I | N |   | T | O | E | R |
+|       | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|-------|---|---|---|---|---|---|---|---|---|---|
+|       | A |   | S | I | N |   | T | O | E | R |
 | **1** | B | C | D | F | G | H | J | K | L | M |
 | **5** | P | Q | U | V | W | X | Y | Z | . | / |
 
@@ -26,6 +26,10 @@ Example encoding of text as stream of digits using straddling checkerboard:
 |-----------|---|---|---|---|---|---|---|---|---|---|
 | Encoded   | 15|  8| 18| 18|  7| 54|  7|  9| 18| 12|
 
+From the command line:
+    echo "Hello world" | ./straddling_checkerboard
+    1581 8187 5479 1812  
+
 Encryption
 ----------
 
@@ -33,22 +37,32 @@ Message begins with 8 digit nonce followed by stream of encrypted digits. Nonce 
 secret, but every value should only be used once. It is similar to page identifier of one 
 time pad.
 
-To encrypt, type nonce followed by encoded stream and record message shown on the LED 
-display.
+To encrypt, type nonce followed by encoded stream and record encrypted message shown on 
+the LED display.
 
 | Nonce     | 5551 | 8424 |      |      |      |      |
 |-----------|------|------|------|------|------|------|
 | Encoded   |      |      | 1581 | 8187 | 5479 | 1812 |
-| Message   | 5551 | 8424 | 6592 | 9162 | 3839 | 2885 |
+| Message   | 5551 | 8424 | 3279 | 9875 | 7770 | 9178 |
+
+From the command line:
+
+    echo "5551 8424 1581 8187 5479 1812" | ./a_sin_to_err
+    5551 8424 3279 9875  7770 9178
 
 Decryption
 ----------
 
 To decrypt, type message and record decrypted stream shown on the LED display.
 
-| Message     | 5551 | 8424 | 6592 | 9162 | 3839 | 2885 |
+| Message     | 5551 | 8424 | 3279 | 9875 | 7770 | 9178 |
 |-------------|------|------|------|------|------|------|
 | Decrypted   |      |      | 1581 | 8187 | 5479 | 1812 |
+
+From the command line:
+
+    echo "5551 8424 3279 9875  7770 9178" | ./a_sin_to_err
+    5551 8424 1581 8187  5479 1812
 
 Decoding
 --------
@@ -58,6 +72,11 @@ Ignore first 8 digits (nonce) and decode the rest using straddling checkerboard.
 | Decrypted   | 15|  8| 18| 18|  7| 54|  7|  9| 18| 12|
 |-------------|---|---|---|---|---|---|---|---|---|---|
 | Decoded     | H | E | L | L | O | W | O | R | L | D |
+
+From the command line:
+
+    echo "1581 8187  5479 1812" | ./straddling_checkerboard
+    HELLOWORLD
 
 Building
 --------
@@ -71,7 +90,11 @@ random, e.g., 128 coin tosses. Then build code generator:
 
 Compile asintoer2.asm on Windows to create ROM for Nibbler:
 
-    assembler -o asintoer2.bin asintoerr2.asm
+    assembler -o asintoer2.bin asintoer2.asm
+    
+Compile optional encoder/decoder:
+    
+    make straddling_checkerboard
 
 Implementation Details
 ----------------------
