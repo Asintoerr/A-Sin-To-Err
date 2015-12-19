@@ -8,9 +8,9 @@ Encoding
 Before encryption, plaintext needs to be converted to a stream of decimal digits. One way 
 to do it is by using [straddling checkerboard](https://en.wikipedia.org/wiki/VIC_cipher#Straddling_checkerboard).
 
-|   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
-|---|---|---|---|---|---|---|---|---|---|---|
-|   | A |   | S | I | N |   | T | O | E | R |
+|       | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|-------|---|---|---|---|---|---|---|---|---|---|
+|       | A |   | S | I | N |   | T | O | E | R |
 | **1** | B | C | D | F | G | H | J | K | L | M |
 | **5** | P | Q | U | V | W | X | Y | Z | . | / |
 
@@ -55,7 +55,7 @@ Decryption
 
 To decrypt, type message and record decrypted stream shown on the LED display.
 
-| Message     | 5551 | 8424 | 6592 | 9162 | 3839 | 2885 |
+| Message     | 5551 | 8424 | 3279 | 9875 | 7770 | 9178 |
 |-------------|------|------|------|------|------|------|
 | Decrypted   |      |      | 1581 | 8187 | 5479 | 1812 |
 

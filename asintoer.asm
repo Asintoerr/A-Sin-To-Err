@@ -26,7 +26,7 @@
 
 ; Where we are in the process
 #define NONCE_DIGITS      $3b ; number of nonce digits entered
-#define MESSAGE_DIGITS    $3c ; 1 nibble
+#define GROUP_DIGITS      $3c ; 1 nibble
 
 ; Debouncing
 #define R0S               $3d ; keypad row 0 state, 1 nibble
@@ -68,7 +68,7 @@
     st CTR_COUNTER+7
     
     st NONCE_DIGITS
-    st MESSAGE_DIGITS
+    st GROUP_DIGITS
 
     st R0S
     st R0C
@@ -98,6 +98,9 @@
     st DD3
 
 main_loop:
+    lit #0
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+
     ld DD0 ; Show digit 0, select row 0 of keypad matrix =================================
     out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110 responds to any port number where bit 0 is 0, e.g., #$e=1110
     lit #1
@@ -323,6 +326,15 @@ main_loop:
     st TEMP
     jnc +
     ; Button *
+; test only insert start =================================================================
+    ld RC5_A
+    st DD3
+    lit #$f 
+    st DD2
+    st DD1
+    ld GROUP_DIGITS
+    st DD0
+; test only insert end =================================================================
     jmp main_loop
 +   addm TEMP
     st TEMP
@@ -333,15 +345,31 @@ main_loop:
     st TEMP
     jnc +
     ; Button #
-    jmp main_loop
+; test only insert start =================================================================
+    ld CTR_COUNTER+2
+    st DD3
+    ld CTR_COUNTER+1
+    st DD2
+    ld CTR_COUNTER+0
+    st DD1
+    lit #$f
+    st DD0
+; test only insert end =================================================================
 +
-++  lit #0
-    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
-    jmp main_loop
+++  jmp main_loop
     
 new_digit:
     ; New digit in accumulator, see if it's part of nonce ================================
     st NEW_DIG
+    
+    lit #0 ; Blank display during long calculation
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+    lit #$f
+    out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
+    lit #0
+    out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+    
     ld NONCE_DIGITS
     cmpi #0
     jnz +
@@ -395,9 +423,9 @@ new_digit:
     st CTR_NONCE+7
     jmp next_nonce
 +
-    ld MESSAGE_DIGITS ; increment digit counter
+    ld GROUP_DIGITS ; increment digit counter
     addi #$1
-    st MESSAGE_DIGITS
+    st GROUP_DIGITS
     cmpi #$1
     jz +
     cmpi #$5
