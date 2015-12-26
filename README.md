@@ -2,6 +2,8 @@
 
 Cipher Machine Using [4 bit Nibbler CPU](http://bigmessofwires.com/nibbler).
 
+![Photo of Nibbler cipher machine](nibbler.jpg?raw=true)
+
 Encoding
 --------
 
@@ -18,7 +20,7 @@ Letters in the unmarked row are represented by one digit (column number), e.g., 
 
 Letters in the other two rows are represented by two digits (row, then column), e.g., W becomes 54.
 
-Numbers are enclosed in / symbols (59), then each number is repeated twice, e.g., 42 becomes 59442259.
+Numbers are enclosed in / symbols (59), then each digit is repeated twice, e.g., 42 becomes 59442259.
 
 Example encoding of text as stream of digits using straddling checkerboard:
 
