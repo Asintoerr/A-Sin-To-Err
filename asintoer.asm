@@ -100,11 +100,21 @@
 main_loop:
     lit #0
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
 
     ld DD0 ; Show digit 0, select row 0 of keypad matrix =================================
     out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110 responds to any port number where bit 0 is 0, e.g., #$e=1110
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
+
     lit #1
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
     
     lit #$8 ; Delay
     st DELAY0
@@ -160,11 +170,21 @@ main_loop:
 +
 ++  lit #0
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
     
     ld DD1 ; Show digit 1, select row 1 of keypad matrix =================================
     out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
+
     lit #2
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
     
     lit #$8 ; Delay
     st DELAY0
@@ -220,11 +240,21 @@ main_loop:
 +
 ++  lit #0
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
 
     ld DD2 ; Show digit 2, select row 2 of keypad matrix =================================
     out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
+
     lit #4
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
     
     lit #$8 ; Delay
     st DELAY0
@@ -280,11 +310,20 @@ main_loop:
 +
 ++  lit #0
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
 
     ld DD3 ; Show digit 3, select row 3 of keypad matrix =================================
     out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
     lit #8
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
     
     lit #$8 ; Delay
     st DELAY0
@@ -364,11 +403,27 @@ new_digit:
     
     lit #0 ; Blank display during long calculation
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
+
     lit #$f
     out #$e ; OUT0 responds to any port number where bit 0 is 0, e.g., #$e=1110
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
+
+    lit #$f
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
+
     lit #0
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101 ; Reset control bit
+    lit #0  ; rather
+-   addi #1 ; short
+    jnz -   ; delay
     
     ld NONCE_DIGITS
     cmpi #0
