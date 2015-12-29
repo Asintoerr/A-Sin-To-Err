@@ -45,9 +45,12 @@
 #define R3C               $47 ; keypad row 3 count, 1 nibble
 #define R3L               $48 ; keypad row 3 previous state, 1 nibble
 
-; Flags for RC5 unrolled loop
-#define TODO_LIST         $49 ; 17*4 nibbles
+#define CLOCK_TICK_CTR    $49 ; 7 nibbles
 
+; Flags for RC5 unrolled loop
+#define TODO_LIST         $50 ; 17*4 nibbles
+
+reset:
     ; Initialization
     lit #$0
     st CTR_NONCE+0
@@ -86,15 +89,21 @@
     st R3C
     st R3L
 
-    ; Initial state of LED display, can be key or version ID.
-    ; Hex values above 9 are shown as blank.
-    lit #$e
+    st CLOCK_TICK_CTR+0
+    st CLOCK_TICK_CTR+1
+    st CLOCK_TICK_CTR+2
+    st CLOCK_TICK_CTR+3
+    st CLOCK_TICK_CTR+4
+    st CLOCK_TICK_CTR+5
+    st CLOCK_TICK_CTR+6
+    st CLOCK_TICK_CTR+7
+
+    ; Initial state of LED display
     st DD0
-    lit #$2
     st DD1
-    lit #$5
+    lit #2
     st DD2
-    lit #$a
+    lit #1
     st DD3
 
 main_loop:
@@ -365,16 +374,7 @@ main_loop:
     st TEMP
     jnc +
     ; Button *
-; test only insert start =================================================================
-    ld RC5_A
-    st DD3
-    lit #$f 
-    st DD2
-    st DD1
-    ld GROUP_DIGITS
-    st DD0
-; test only insert end =================================================================
-    jmp main_loop
+    jmp reset
 +   addm TEMP
     st TEMP
     jnc +
@@ -393,9 +393,122 @@ main_loop:
     st DD1
     lit #$f
     st DD0
-; test only insert end =================================================================
+; test only insert end ===================================================================
 +
-++  jmp main_loop
+++  
+; clock ==================================================================================
+    ld NONCE_DIGITS ; check if clock is running
+    cmpi #0
+    jz +
+    cmpi #4
+    jz +
+    jmp main_loop ; clock not running
++
+    ld CLOCK_TICK_CTR+0 ; clock running, increment tick counter
+    addi #1
+    st CLOCK_TICK_CTR+0
+    jnc +
+    ld CLOCK_TICK_CTR+1
+    addi #1
+    st CLOCK_TICK_CTR+1
+    jnc +
+    ld CLOCK_TICK_CTR+2
+    addi #1
+    st CLOCK_TICK_CTR+2
+    jnc +
+    ld CLOCK_TICK_CTR+3
+    addi #1
+    st CLOCK_TICK_CTR+3
+    jnc +
+    ld CLOCK_TICK_CTR+4
+    addi #1
+    st CLOCK_TICK_CTR+4
+    jnc +
+    ld CLOCK_TICK_CTR+5
+    addi #1
+    st CLOCK_TICK_CTR+5
+    jnc +
+    ld CLOCK_TICK_CTR+6
+    addi #1
+    st CLOCK_TICK_CTR+6
++   ld CLOCK_TICK_CTR+6 ; time to increment minutes?
+    cmpi #$0
+    jnz main_loop
+    ld CLOCK_TICK_CTR+5
+    cmpi #$0
+    jnz main_loop
+    ld CLOCK_TICK_CTR+4
+    cmpi #$0
+    jnz main_loop
+    ld CLOCK_TICK_CTR+3
+    cmpi #$7
+    jnz main_loop
+    ld CLOCK_TICK_CTR+2
+    cmpi #$7
+    jnz main_loop
+    ld CLOCK_TICK_CTR+1
+    cmpi #$7
+    jnz main_loop
+    ld CLOCK_TICK_CTR+0
+    cmpi #$a
+    jnz main_loop
+    lit #0              ; wrap around - reset counter
+    st CLOCK_TICK_CTR+0
+    st CLOCK_TICK_CTR+1
+    st CLOCK_TICK_CTR+2
+    st CLOCK_TICK_CTR+3
+    st CLOCK_TICK_CTR+4
+    st CLOCK_TICK_CTR+5
+    st CLOCK_TICK_CTR+6
+    st CLOCK_TICK_CTR+7
+    ld DD0              ; increment minutes
+    addi #$1
+    st DD0
+    cmpi #10
+    jnc main_loop
+    lit #0
+    st DD0
+    ld DD1              ; increment tens of minutes
+    addi #$1
+    st DD1
+    cmpi #6
+    jnc main_loop    
+    lit #0
+    st DD1
+    ld DD3              ; increment hours
+    cmpi #0
+    jz +
+    cmpi #1
+    jz ++
+    ld DD2              ; 2xxx
+    addi #1
+    st DD2
+    cmpi #4
+    jnc main_loop
+    lit #0
+    st DD2
+    st DD3
+    jmp main_loop
++   ld DD2              ; 0xxx
+    addi #1
+    st DD2
+    cmpi #10
+    jnc main_loop    
+    lit #0
+    st DD2
+    lit #1
+    st DD3
+    jmp main_loop
+++  ld DD2              ; or 1xxx
+    addi #1
+    st DD2
+    cmpi #10
+    jnc main_loop    
+    lit #0
+    st DD2
+    lit #2
+    st DD3
+    jmp main_loop
     
 new_digit:
     ; New digit in accumulator, see if it's part of nonce ================================
