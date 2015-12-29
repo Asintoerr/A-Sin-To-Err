@@ -126,3 +126,16 @@ The only hardware changes compared to the original Nibbler are input and output:
 * 12 key telephone-style keypad instead of four pushbuttons. Key switches are arranged in
 a matrix. Columns are connected to IN0. Rightmost column is bit 0. Rows are connected to 
 OUT0. Top row is bit 0.
+
+Clock
+-----
+
+When no keys are pressed after device is turned on or reset, it works as a clock. Time is
+displayed in 24 hour (military) standard, hours and minutes only. Time can be set using 
+the keypad. Clock runs only when no or 4 digits have been entered so that it does not 
+interfere with encryption.
+
+Reset
+-----
+
+Pressing "*" (star) key resets the device.

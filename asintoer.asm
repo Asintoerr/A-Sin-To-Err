@@ -1,51 +1,51 @@
 ; Nibbler cipher machine
 
-; RC5 input
+; RC5 block cipher input
 #define CTR_NONCE           $0 ; 32 bits = 8 nibbles
 #define CTR_COUNTER         $8 ; 32 bits = 8 nibbles
 
-; RC5 output
+; RC5 block cipher output
 #define RC5_A              $10 ; 32 bits = 8 nibbles
 #define RC5_B              $18 ; 32 bits = 8 nibbles
 
-; Temporary variables
+; Temporary variables for RC5
 #define OPERAND_A          $20 ; 32 bits = 8 nibbles
 #define OPERAND_B          $28 ; 32 bits = 8 nibbles
 #define ROTL_COUNT         $30 ; 5 bits = 2 nibbles
 #define BUFFER_VARIABLE    $32 ; 1 nibble
 
-; IO related
+; Input/output related variables
 #define DD0               $33 ; display digit 0, 1 nibble
 #define DD1               $34 ; display digit 1, 1 nibble
 #define DD2               $35 ; display digit 2, 1 nibble
 #define DD3               $36 ; display digit 3, 1 nibble
 #define NEW_DIG           $37 ; new digit, 1 nibble
 #define TEMP              $38 ; 1 nibble
-#define DELAY0            $39 ; 1 nibble
-#define DELAY1            $3a ; 1 nibble
+#define DELAY0            $39 ; low 4 bits of main cycle delay, 1 nibble
+#define DELAY1            $3a ; high 4 bits of main cycle delay, 1 nibble
 
-; Where we are in the process
-#define NONCE_DIGITS      $3b ; number of nonce digits entered
-#define GROUP_DIGITS      $3c ; 1 nibble
+; Current position in the digit sequence
+#define NONCE_DIGITS      $3b ; number of nonce digits entered, 1 nibble
+#define GROUP_DIGITS      $3c ; number of entered digits in current group, 1 nibble
 
 ; Debouncing
 #define R0S               $3d ; keypad row 0 state, 1 nibble
-#define R0C               $3e ; keypad row 0 count, 1 nibble
-#define R0L               $3f ; keypad row 0 previous state, 1 nibble
+#define R0C               $3e ; keypad row 0 main loops with no change in state, 1 nibble
+#define R0L               $3f ; keypad row 0 last seen state, 1 nibble
 
 #define R1S               $40 ; keypad row 1 state, 1 nibble
-#define R1C               $41 ; keypad row 1 count, 1 nibble
-#define R1L               $42 ; keypad row 1 previous state, 1 nibble
+#define R1C               $41 ; keypad row 1 main loops with no change in state, 1 nibble
+#define R1L               $42 ; keypad row 1 last seen state, 1 nibble
 
 #define R2S               $43 ; keypad row 2 state, 1 nibble
-#define R2C               $44 ; keypad row 2 count, 1 nibble
-#define R2L               $45 ; keypad row 2 previous state, 1 nibble
+#define R2C               $44 ; keypad row 2 main loops with no change in state, 1 nibble
+#define R2L               $45 ; keypad row 2 last seen state, 1 nibble
 
 #define R3S               $46 ; keypad row 3 state, 1 nibble
-#define R3C               $47 ; keypad row 3 count, 1 nibble
-#define R3L               $48 ; keypad row 3 previous state, 1 nibble
+#define R3C               $47 ; keypad row 3 main loops with no change in state, 1 nibble
+#define R3L               $48 ; keypad row 3 last seen state, 1 nibble
 
-#define CLOCK_TICK_CTR    $49 ; 7 nibbles
+#define CLOCK_TICK_CTR    $49 ; number of main loops since last minute increment, 7 nibbles
 
 ; Flags for RC5 unrolled loop
 #define TODO_LIST         $50 ; 17*4 nibbles
@@ -98,7 +98,7 @@ reset:
     st CLOCK_TICK_CTR+6
     st CLOCK_TICK_CTR+7
 
-    ; Initial state of LED display
+    ; Initial state of LED display is 1200, like in VCRs
     st DD0
     st DD1
     lit #2
@@ -119,16 +119,16 @@ main_loop:
 -   addi #1 ; short
     jnz -   ; delay
 
-    lit #1
+    lit #1  ; High level on lowest bit of OUT1 causes rightmost LED digit to show OUT0
     out #$d ; OUT1 responds to any port number where bit 1 is 0, e.g., #$d=1101
     lit #0  ; rather
 -   addi #1 ; short
     jnz -   ; delay
     
-    lit #$8 ; Delay
+    lit #$8 ; Keypad row 0 read delay
     st DELAY0
     st DELAY1
---  lit #$8 ; Delay
+--  lit #$8 ; Decrement delay counter until it's zero
 -   jz +
     addi #-1
     jmp -
@@ -143,7 +143,7 @@ main_loop:
     st DELAY1
     jnz --
 
-+   in #0 ; Debounce
++   in #0 ; Debounce topmost keypad row
     cmpm R0L
     jz ++
     cmpm R0S
@@ -195,10 +195,10 @@ main_loop:
 -   addi #1 ; short
     jnz -   ; delay
     
-    lit #$8 ; Delay
+    lit #$8 ; Keypad row 1 read delay
     st DELAY0
     st DELAY1
---  lit #$8 ; Delay
+--  lit #$8 ; Decrement delay counter until it's zero
 -   jz +
     addi #-1
     jmp -
@@ -213,7 +213,7 @@ main_loop:
     st DELAY1
     jnz --
 
-+   in #0 ; Debounce
++   in #0 ; Debounce keypad row 1
     cmpm R1L
     jz ++
     cmpm R1S
@@ -265,10 +265,10 @@ main_loop:
 -   addi #1 ; short
     jnz -   ; delay
     
-    lit #$8 ; Delay
+    lit #$8 ; Keypad row 2 read delay
     st DELAY0
     st DELAY1
---  lit #$8 ; Delay
+--  lit #$8 ; Decrement delay counter until it's zero
 -   jz +
     addi #-1
     jmp -
@@ -283,7 +283,7 @@ main_loop:
     st DELAY1
     jnz --
 
-+   in #0 ; Debounce
++   in #0 ; Debounce keypad row 2
     cmpm R2L
     jz ++
     cmpm R2S
@@ -334,10 +334,10 @@ main_loop:
 -   addi #1 ; short
     jnz -   ; delay
     
-    lit #$8 ; Delay
+    lit #$8 ; Keypad row 3 read delay
     st DELAY0
     st DELAY1
---  lit #$8 ; Delay
+--  lit #$8 ; Decrement delay counter until it's zero
 -   jz +
     addi #-1
     jmp -
@@ -352,7 +352,7 @@ main_loop:
     st DELAY1
     jnz --
 
-+   in #0 ; Debounce
++   in #0  ; Debounce keypad row 3
     cmpm R3L
     jz ++
     cmpm R3S
@@ -397,14 +397,14 @@ main_loop:
 +
 ++  
 ; clock ==================================================================================
-    ld NONCE_DIGITS ; check if clock is running
-    cmpi #0
+    ld NONCE_DIGITS ; Clock is running if
+    cmpi #0         ; there were no digits entered, or
     jz +
-    cmpi #4
+    cmpi #4         ; if there were 4 digits entered.
     jz +
-    jmp main_loop ; clock not running
+    jmp main_loop   ; Clock is not running
 +
-    ld CLOCK_TICK_CTR+0 ; clock running, increment tick counter
+    ld CLOCK_TICK_CTR+0 ; Clock is running, increment tick counter
     addi #1
     st CLOCK_TICK_CTR+0
     jnc +
@@ -432,10 +432,18 @@ main_loop:
     addi #1
     st CLOCK_TICK_CTR+6
 +   ld CLOCK_TICK_CTR+6 ; time to increment minutes?
-    cmpi #$0
+
+; Determining number of main_loop cycles per minute
+;
+;   with 0x123 cycles per minute, clock advances by 8 hours in 4 minutes 34 seconds
+;   first iteration 0x123 * 8 * 60 * 60 / (4 * 60 + 34) = 30,586 = 0x777a
+;   with 0x777a cycles per minute, clock advances by 1 hour in 59 minutes 46.28 seconds
+;   second iteration 0x777a * 60 * 60 / (59 * 60 + 46.28) = 30,703 = 0x77ef
+
+    cmpi #$0            ; most significant nibble of number of cycles per minute
     jnz main_loop
     ld CLOCK_TICK_CTR+5
-    cmpi #$0
+    cmpi #$0            
     jnz main_loop
     ld CLOCK_TICK_CTR+4
     cmpi #$0
@@ -447,10 +455,10 @@ main_loop:
     cmpi #$7
     jnz main_loop
     ld CLOCK_TICK_CTR+1
-    cmpi #$7
+    cmpi #$e
     jnz main_loop
     ld CLOCK_TICK_CTR+0
-    cmpi #$a
+    cmpi #$f            ; least significant nibble of number of cycles per minute
     jnz main_loop
     lit #0              ; wrap around - reset counter
     st CLOCK_TICK_CTR+0
@@ -480,7 +488,7 @@ main_loop:
     jz +
     cmpi #1
     jz ++
-    ld DD2              ; 2xxx
+    ld DD2              ; 2xxx, wrap hours to 00 when last hours digit becomes 4
     addi #1
     st DD2
     cmpi #4
@@ -489,7 +497,7 @@ main_loop:
     st DD2
     st DD3
     jmp main_loop
-+   ld DD2              ; 0xxx
++   ld DD2              ; 0xxx, increment tens of hours when last hours digit reaches 10
     addi #1
     st DD2
     cmpi #10
@@ -499,7 +507,7 @@ main_loop:
     lit #1
     st DD3
     jmp main_loop
-++  ld DD2              ; or 1xxx
+++  ld DD2              ; 1xxx, increment tens of hours when last hours digit reaches 10
     addi #1
     st DD2
     cmpi #10
@@ -610,7 +618,7 @@ new_digit:
 ++
     ; Get next keystream digit ===========================================================
 get_another_key_digit:
-    ld CTR_COUNTER+0 ; increment counter
+    ld CTR_COUNTER+0 ; increment CTR, jump to automatically generated unrolled RC5 code
     addi #1
     st CTR_COUNTER+0
     jnc rc5_process_block
