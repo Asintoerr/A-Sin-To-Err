@@ -383,17 +383,15 @@ main_loop:
 +   addm TEMP
     st TEMP
     jnc +
-    ; Button #
-; test only insert start =================================================================
-    ld CTR_COUNTER+2
+    ; Button #, for debugging
+    ld CTR_COUNTER+3
     st DD3
-    ld CTR_COUNTER+1
+    ld CTR_COUNTER+2
     st DD2
-    ld CTR_COUNTER+0
+    ld CTR_COUNTER+1
     st DD1
-    lit #$f
+    ld CTR_COUNTER+0
     st DD0
-; test only insert end ===================================================================
 +
 ++  
 ; clock ==================================================================================
@@ -439,6 +437,10 @@ main_loop:
 ;   first iteration 0x123 * 8 * 60 * 60 / (4 * 60 + 34) = 30,586 = 0x777a
 ;   with 0x777a cycles per minute, clock advances by 1 hour in 59 minutes 46.28 seconds
 ;   second iteration 0x777a * 60 * 60 / (59 * 60 + 46.28) = 30,703 = 0x77ef
+;   with 0x77ef cycles per minute, clock is 13 seconds slow in 34 hours and 49 minutes
+;   third iteration 0x77ef * (1. - 13. / (34 * 60 * 60 + 49 * 60)) = 30,700 = 0x77ec
+;
+;   least significant bit is approximately 3 seconds per day
 
     cmpi #$0            ; most significant nibble of number of cycles per minute
     jnz main_loop
@@ -458,7 +460,7 @@ main_loop:
     cmpi #$e
     jnz main_loop
     ld CLOCK_TICK_CTR+0
-    cmpi #$f            ; least significant nibble of number of cycles per minute
+    cmpi #$c            ; least significant nibble of number of cycles per minute
     jnz main_loop
     lit #0              ; wrap around - reset counter
     st CLOCK_TICK_CTR+0

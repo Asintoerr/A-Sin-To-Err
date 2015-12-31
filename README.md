@@ -135,7 +135,8 @@ displayed in 24 hour (military) standard, hours and minutes only. Time can be se
 the keypad. Clock runs only when no or 4 digits have been entered so that it does not 
 interfere with encryption.
 
-Reset
------
+Other keys
+----------
 
-Pressing "*" (star) key resets the device.
+"*" (star) key resets the device. "#" (hash) key shows debugging information (currently 
+four least significant digits of CTR, hex values above 9 decoded as blanks). 
