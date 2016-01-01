@@ -96,7 +96,6 @@ reset:
     st CLOCK_TICK_CTR+4
     st CLOCK_TICK_CTR+5
     st CLOCK_TICK_CTR+6
-    st CLOCK_TICK_CTR+7
 
     ; Initial state of LED display is 1200, like in VCRs
     st DD0
