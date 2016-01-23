@@ -2,6 +2,8 @@
 
 Cipher Machine Using [4 bit Nibbler CPU](http://bigmessofwires.com/nibbler).
 
+![Photo of Nibbler cipher machine](nibbler.jpg?raw=true)
+
 Encoding
 --------
 
@@ -18,7 +20,7 @@ Letters in the unmarked row are represented by one digit (column number), e.g., 
 
 Letters in the other two rows are represented by two digits (row, then column), e.g., W becomes 54.
 
-Numbers are enclosed in / symbols (59), then each number is repeated twice, e.g., 42 becomes 59442259.
+Numbers are enclosed in / symbols (59), then each digit is repeated twice, e.g., 42 becomes 59442259.
 
 Example encoding of text as stream of digits using straddling checkerboard:
 
@@ -124,3 +126,17 @@ The only hardware changes compared to the original Nibbler are input and output:
 * 12 key telephone-style keypad instead of four pushbuttons. Key switches are arranged in
 a matrix. Columns are connected to IN0. Rightmost column is bit 0. Rows are connected to 
 OUT0. Top row is bit 0.
+
+Clock
+-----
+
+When no keys are pressed after device is turned on or reset, it works as a clock. Time is
+displayed in 24 hour (military) standard, hours and minutes only. Time can be set using 
+the keypad. Clock runs only when no or 4 digits have been entered so that it does not 
+interfere with encryption.
+
+Other keys
+----------
+
+"*" (star) key resets the device. "#" (hash) key shows debugging information (currently 
+four least significant digits of CTR, hex values above 9 decoded as blanks). 
